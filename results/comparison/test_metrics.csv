@@ -1,0 +1,3 @@
+method,selected_parameter,selected_parameter_days,level_one_half_life_days,order,fitted_feature_count,selected_ridge_penalty,validation_rmse_mw,test_rmse_mw,test_mae_mw,test_mape_percent,test_start,test_end,test_observations
+Rolling Window Signature,window_days,13.0,,6,120,5623.413251903491,3289.641877578527,3423.033396881144,2538.926038066133,4.8793202632463775,2015-01-01T00:00,2015-12-31T23:30,17520
+Fading Memory Signature,level_one_1pct_horizon_days,17.0,2.5587549631438398,6,120,5623.413251903491,3273.186944539082,3300.7789949873504,2426.742651251474,4.637412427306168,2015-01-01T00:00,2015-12-31T23:30,17520

@@ -1,0 +1,22 @@
+[
+  {
+    "method":"Rolling Window Signature",
+    "selected_parameter_days":13.0,
+    "feature_construction_seconds":0.253084417,
+    "ridge_tune_and_refit_seconds":0.183234542,
+    "feature_rows":52560,
+    "fitted_feature_count":120,
+    "feature_matrix_mib":48.1201171875,
+    "online_signature_state_kib":0.984375
+  },
+  {
+    "method":"Fading Memory Signature",
+    "selected_parameter_days":17.0,
+    "feature_construction_seconds":0.29990775,
+    "ridge_tune_and_refit_seconds":0.192577875,
+    "feature_rows":52560,
+    "fitted_feature_count":120,
+    "feature_matrix_mib":48.1201171875,
+    "online_signature_state_kib":0.984375
+  }
+]

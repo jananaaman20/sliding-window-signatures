@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sliding-window-signatures"
+version = "0.1.0"
+description = "Reproduction of the sliding-window signature experiments in arXiv:2510.12337."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+dependencies = [
+  "iisignature @ git+https://github.com/bottler/iisignature.git@0c29eb6dcc3ba55781b022fd3ec64e8944156408",
+  "matplotlib>=3.8,<4",
+  "numpy>=1.26,<3",
+  "pandas>=2.2,<4",
+  "scikit-learn>=1.4,<2",
+]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.12,<1"]
+
+[project.scripts]
+slidesig-reproduce = "sliding_window_signatures.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sliding_window_signatures"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+

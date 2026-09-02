@@ -1,0 +1,3 @@
+method,selected_parameter_days,feature_construction_seconds,ridge_tune_and_refit_seconds,feature_rows,fitted_feature_count,feature_matrix_mib,online_signature_state_kib
+Rolling Window Signature,13.0,0.25308441699598916,0.18323454199708067,52560,120,48.1201171875,0.984375
+Fading Memory Signature,17.0,0.2999077499989653,0.19257787500100676,52560,120,48.1201171875,0.984375

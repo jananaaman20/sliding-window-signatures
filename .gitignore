@@ -1,0 +1,17 @@
+.DS_Store
+.ruff_cache/
+.venv/
+.cache/
+__pycache__/
+*.egg-info/
+build/
+dist/
+
+# Downloaded source data.
+data/data.csv
+
+# Generated reproduction artifacts.
+results/**/*.csv
+results/**/*.json
+results/**/*.png
+results/**/*.html

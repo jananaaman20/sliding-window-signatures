@@ -1,0 +1,5991 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Rolling Window vs Fading Memory Signatures",
+    "description": "A controlled electricity-demand comparison and beginner-friendly technical guide.",
+    "generatedAt": "2026-08-04T15:41:42+00:00",
+    "cards": [
+      {
+        "id": "rolling_rmse",
+        "description": "Shared 2015 RMSE after selecting a 13-day window on 2014.",
+        "dataset": "headline",
+        "sourceId": "headline_sql",
+        "metrics": [
+          {
+            "label": "Rolling test RMSE (MW)",
+            "field": "rolling_rmse_mw"
+          },
+          {
+            "label": "Selected horizon (days)",
+            "field": "rolling_horizon_days"
+          }
+        ]
+      },
+      {
+        "id": "fading_rmse",
+        "description": "Shared 2015 RMSE for the equal-rate EFM state, selected on 2014.",
+        "dataset": "headline",
+        "sourceId": "headline_sql",
+        "metrics": [
+          {
+            "label": "Fading test RMSE (MW)",
+            "field": "fading_rmse_mw"
+          },
+          {
+            "label": "Selected 1% horizon (days)",
+            "field": "fading_horizon_days"
+          }
+        ]
+      },
+      {
+        "id": "rmse_difference",
+        "description": "Fading minus rolling RMSE. Negative favors fading; uncertainty uses weekly blocks.",
+        "dataset": "headline",
+        "sourceId": "headline_sql",
+        "metrics": [
+          {
+            "label": "RMSE difference (MW)",
+            "field": "rmse_difference_mw",
+            "signed": true
+          },
+          {
+            "label": "Relative difference",
+            "field": "relative_rmse_difference",
+            "format": "percent",
+            "signed": true
+          },
+          {
+            "label": "Bootstrap resamples favoring fading",
+            "field": "bootstrap_resample_share_fading_better",
+            "format": "percent"
+          }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "memory_kernel",
+        "title": "Memory weight by age",
+        "subtitle": "Level-one comparison plus the faster level-three EFM decay.",
+        "type": "line",
+        "dataset": "memory_kernel",
+        "sourceId": "memory_kernel_sql",
+        "encodings": {
+          "x": {
+            "field": "age_days",
+            "type": "quantitative",
+            "label": "Age (days)"
+          },
+          "y": {
+            "field": "relative_weight",
+            "type": "quantitative",
+            "label": "Relative contribution"
+          },
+          "color": {
+            "field": "series",
+            "type": "nominal",
+            "label": "Memory rule"
+          }
+        },
+        "layout": "full"
+      },
+      {
+        "id": "validation_sweep",
+        "title": "Validation RMSE across memory horizons",
+        "subtitle": "Both methods use the same candidate horizons and the 2014 validation year.",
+        "type": "line",
+        "dataset": "validation_sweep",
+        "sourceId": "validation_sweep_sql",
+        "encodings": {
+          "x": {
+            "field": "parameter_days",
+            "type": "quantitative",
+            "label": "Memory horizon (days)"
+          },
+          "y": {
+            "field": "validation_rmse_mw",
+            "type": "quantitative",
+            "label": "Validation RMSE (MW)"
+          },
+          "color": {
+            "field": "series",
+            "type": "nominal",
+            "label": "Method"
+          },
+          "tooltip": [
+            {
+              "field": "selected_ridge_penalty",
+              "label": "Ridge penalty"
+            }
+          ]
+        },
+        "layout": "full"
+      },
+      {
+        "id": "seasonal_rmse",
+        "title": "Shared 2015 RMSE by season",
+        "subtitle": "Every seasonal slice uses the same timestamps for both models.",
+        "type": "bar",
+        "dataset": "seasonal_metrics",
+        "sourceId": "seasonal_metrics_sql",
+        "encodings": {
+          "x": {
+            "field": "season",
+            "type": "ordinal",
+            "label": "Season"
+          },
+          "y": {
+            "field": "rmse_mw",
+            "type": "quantitative",
+            "label": "RMSE (MW)"
+          },
+          "color": {
+            "field": "series",
+            "type": "nominal",
+            "label": "Method"
+          }
+        },
+        "layout": "full"
+      },
+      {
+        "id": "forecast_examples",
+        "title": "Observed and predicted demand in two example weeks",
+        "subtitle": "Two-hour sampling is used only to keep the report snapshot compact.",
+        "type": "line",
+        "dataset": "forecast_examples",
+        "sourceId": "forecast_examples_sql",
+        "encodings": {
+          "x": {
+            "field": "datetime",
+            "type": "temporal",
+            "label": "Time"
+          },
+          "y": {
+            "field": "demand_mw",
+            "type": "quantitative",
+            "label": "Demand (MW)"
+          },
+          "color": {
+            "field": "series",
+            "type": "nominal",
+            "label": "Series"
+          },
+          "facet": {
+            "field": "period",
+            "type": "nominal",
+            "label": "Week"
+          }
+        },
+        "layout": "full"
+      }
+    ],
+    "tables": [
+      {
+        "id": "test_metrics",
+        "title": "Shared 2015 accuracy",
+        "subtitle": "One validation-selected model per memory representation.",
+        "dataset": "test_metrics",
+        "sourceId": "test_metrics_sql",
+        "defaultSort": {
+          "field": "test_rmse_mw",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "method_short",
+            "label": "Method",
+            "type": "text"
+          },
+          {
+            "field": "selected_parameter_days",
+            "label": "Selected H (days)"
+          },
+          {
+            "field": "selected_ridge_penalty",
+            "label": "Ridge penalty"
+          },
+          {
+            "field": "test_rmse_mw",
+            "label": "RMSE (MW)"
+          },
+          {
+            "field": "test_mae_mw",
+            "label": "MAE (MW)"
+          },
+          {
+            "field": "test_mape_percent",
+            "label": "MAPE (%)"
+          }
+        ],
+        "layout": "full"
+      },
+      {
+        "id": "runtime",
+        "title": "Measured computation for selected models",
+        "subtitle": "Single-run wall-clock measurements in the pinned project environment.",
+        "dataset": "runtime",
+        "sourceId": "runtime_sql",
+        "defaultSort": {
+          "field": "method_short",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "method_short",
+            "label": "Method",
+            "type": "text"
+          },
+          {
+            "field": "feature_construction_seconds",
+            "label": "Features (s)"
+          },
+          {
+            "field": "ridge_tune_and_refit_seconds",
+            "label": "Ridge (s)"
+          },
+          {
+            "field": "feature_matrix_mib",
+            "label": "Matrix (MiB)"
+          },
+          {
+            "field": "online_signature_state_kib",
+            "label": "State (KiB)"
+          }
+        ],
+        "layout": "full"
+      },
+      {
+        "id": "tradeoffs",
+        "title": "General method comparison",
+        "subtitle": "Structural differences independent of this dataset.",
+        "dataset": "tradeoffs",
+        "sourceId": "tradeoffs_sql",
+        "defaultSort": {
+          "field": "property",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "property",
+            "label": "Property",
+            "type": "text"
+          },
+          {
+            "field": "rolling",
+            "label": "Rolling window",
+            "type": "text"
+          },
+          {
+            "field": "fading",
+            "label": "Fading memory",
+            "type": "text"
+          }
+        ],
+        "layout": "full"
+      }
+    ],
+    "sources": [
+      {
+        "id": "comparison_results",
+        "label": "Controlled Python comparison",
+        "path": "src/sliding_window_signatures/comparison.py"
+      },
+      {
+        "id": "rolling_paper",
+        "label": "Sliding-Window Signatures paper",
+        "href": "https://arxiv.org/abs/2510.12337"
+      },
+      {
+        "id": "fading_paper",
+        "label": "Exponentially Fading Memory Signature paper v2",
+        "href": "https://arxiv.org/abs/2507.03700v2"
+      },
+      {
+        "id": "paper_comparison",
+        "label": "Structural comparison derived from both signature papers",
+        "href": "https://arxiv.org/abs/2507.03700v2"
+      },
+      {
+        "id": "author_repository",
+        "label": "Author-associated exploratory repository",
+        "href": "https://github.com/DimitriSotnikov/signature"
+      },
+      {
+        "id": "headline_sql",
+        "label": "Headline query"
+      },
+      {
+        "id": "memory_kernel_sql",
+        "label": "Memory Kernel query"
+      },
+      {
+        "id": "validation_sweep_sql",
+        "label": "Validation Sweep query"
+      },
+      {
+        "id": "test_metrics_sql",
+        "label": "Test Metrics query"
+      },
+      {
+        "id": "seasonal_metrics_sql",
+        "label": "Seasonal Metrics query"
+      },
+      {
+        "id": "forecast_examples_sql",
+        "label": "Forecast Examples query"
+      },
+      {
+        "id": "runtime_sql",
+        "label": "Runtime query"
+      },
+      {
+        "id": "tradeoffs_sql",
+        "label": "Tradeoffs query"
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# Rolling Window vs Fading Memory Signatures"
+      },
+      {
+        "id": "technical_summary",
+        "type": "markdown",
+        "sourceId": "comparison_results",
+        "body": "## Technical summary\n\nThe controlled test gives **3,423 MW RMSE** for rolling memory and **3,301 MW** for fading memory. The fading-minus-rolling difference is **-122 MW** (-3.57%). The point estimate favors fading, but the weekly-block 95% interval [-252, 5] MW includes zero, so this test year does not resolve a reliable winner.\n\nThe practical conclusion is not that one signature is universally better. The two methods encode different beliefs about how old information should disappear."
+      },
+      {
+        "id": "headline_metrics",
+        "type": "metric-strip",
+        "cardIds": [
+          "rolling_rmse",
+          "fading_rmse",
+          "rmse_difference"
+        ]
+      },
+      {
+        "id": "memory_concept",
+        "type": "markdown",
+        "body": "## The central difference is how the past leaves the model\n\n**Rolling Window Signature (RWS).** Keep the last `H` days with full weight and remove anything older. When the window moves, reverse the oldest segment, combine it with the current signature so it cancels, then append the newest segment.\n\n**Fading Memory Signature (EFM).** Keep one state representing the whole observed past, but continuously discount older path increments. Nothing falls off a cliff. A level-`k` coefficient fades `k` times as fast when every channel uses one common rate."
+      },
+      {
+        "id": "memory_kernel_chart",
+        "type": "chart",
+        "chartId": "memory_kernel"
+      },
+      {
+        "id": "math_update",
+        "type": "markdown",
+        "body": "## The exact EFM update, in beginner language\n\nFor one new half-hour segment, the implementation performs two exact operations:\n\n1. **Fade the old state.** Multiply every level-`k` block by `exp(-k * lambda * dt)`.\n2. **Append the new segment.** Replace its increment `delta_x` by `phi * delta_x`, where phi = (1 - exp(-lambda * dt)) / (lambda * dt)`, then apply the ordinary tensor exponential and Chen product.\n\nThe code evaluates `phi` with `expm1`, which stays accurate when the decay rate is small. This is Lemma 4.2 and equation (4.4) of the [EFM paper](https://arxiv.org/abs/2507.03700v2), not an EMA applied after computing ordinary signature rows."
+      },
+      {
+        "id": "methodology",
+        "type": "markdown",
+        "sourceId": "comparison_results",
+        "body": "## Controlled experimental design\n\nOnly the memory representation changes. Both models use the same time-temperature path, order `N=6`, **120 fitted coefficients**, seven-day target increment, train-only feature standardization, squared loss, Ridge regression, and timestamps.\n\n- **2012:** common context and EFM burn-in only\n- **2013:** model training\n- **2014:** memory-horizon and Ridge-penalty selection\n- **2015:** shared evaluation, 17,520 half-hour observations; it does not select `H` or Ridge `alpha` in this run\n\nA common parameter `H` makes the comparison readable. Rolling memory uses a window of `H` days. EFM sets `lambda = log(100) / H`, so a level-one contribution that is `H` days old has 1% of its initial weight."
+      },
+      {
+        "id": "ridge_reasoning",
+        "type": "markdown",
+        "body": "## Why squared loss and why Ridge for both methods\n\nSquared loss matches the primary RMSE metric and gives unusually large demand errors extra weight. Signature coordinates are strongly related to one another, especially across neighboring levels. Ordinary least squares can therefore use large, unstable coefficients. Ridge adds the squared coefficient penalty `alpha * ||beta||^2`, trading a little bias for lower variance and a more stable forecast.\n\nThe EFM paper uses Elastic Net in one stationary-SDE illustration. This comparison keeps Ridge for EFM because changing both the memory representation and estimator would not isolate the question the experiment is meant to answer."
+      },
+      {
+        "id": "validation_read",
+        "type": "markdown",
+        "sourceId": "comparison_results",
+        "body": "## Memory is selected before the test year\n\nValidation selects a **13-day rolling window** and a **17-day EFM 1% horizon**. The latter corresponds to a 2.56-day level-one half-life. Ridge penalties are 5623.41 and 5623.41, respectively. The curve shows whether each optimum is broad or fragile; 2015 is absent from this decision."
+      },
+      {
+        "id": "validation_chart",
+        "type": "chart",
+        "chartId": "validation_sweep"
+      },
+      {
+        "id": "test_result",
+        "type": "markdown",
+        "sourceId": "comparison_results",
+        "body": "## Shared 2015 performance is a paired comparison\n\nBoth predictions are scored at the same 2015 timestamps. The point estimate favors fading, but the weekly-block 95% interval [-252, 5] MW includes zero, so this test year does not resolve a reliable winner. The interval comes from 2,000 circular moving-block bootstrap samples with seven-day blocks, preserving short-range dependence better than resampling isolated half-hours. The interval and resample share are conditional on the two fixed fitted models and this block choice. MAE and MAPE are supporting measures, not separately selected models."
+      },
+      {
+        "id": "test_metrics_table",
+        "type": "table",
+        "tableId": "test_metrics"
+      },
+      {
+        "id": "seasonal_read",
+        "type": "markdown",
+        "sourceId": "comparison_results",
+        "body": "## Aggregate accuracy can hide seasonal reversals\n\nThe seasonal bars separate winter heating conditions, spring transitions, summer, and autumn. A method that wins overall but loses in one season may be learning a particular regime rather than a generally superior memory rule."
+      },
+      {
+        "id": "seasonal_chart",
+        "type": "chart",
+        "chartId": "seasonal_rmse"
+      },
+      {
+        "id": "forecast_read",
+        "type": "markdown",
+        "sourceId": "comparison_results",
+        "body": "## Forecast traces explain what an average error cannot\n\nThe winter and summer weeks show whether a method misses the level, smooths peaks, or reacts too slowly. These weeks are descriptive examples from the common test horizon; they were not chosen to select either model."
+      },
+      {
+        "id": "forecast_chart",
+        "type": "chart",
+        "chartId": "forecast_examples"
+      },
+      {
+        "id": "efficiency_read",
+        "type": "markdown",
+        "sourceId": "comparison_results",
+        "body": "## Both methods have a fixed-size online signature state\n\nAt equal dimension and order, both store 126 raw nonconstant signature coordinates before six pure-time words are dropped for regression. EFM needs only the current state and latest point. The optimized rolling update also keeps a fixed-size signature state, but it additionally needs the active path window so the oldest segment can be removed. Wall-clock figures are single-run diagnostics, not hardware-independent complexity claims."
+      },
+      {
+        "id": "runtime_table",
+        "type": "table",
+        "tableId": "runtime"
+      },
+      {
+        "id": "general_comparison",
+        "type": "markdown",
+        "body": "## General advantages and disadvantages\n\nRolling memory is easier to explain as a literal recent-history window and forgets an obsolete regime completely after `H` days. Its hard boundary can also create abrupt changes when one influential segment exits. EFM has smoother, time-invariant, mean-reverting dynamics and no mathematically required window buffer, but its remote past never becomes exactly zero and finite data require initialization or burn-in."
+      },
+      {
+        "id": "tradeoffs_table",
+        "type": "table",
+        "tableId": "tradeoffs"
+      },
+      {
+        "id": "limitations",
+        "type": "markdown",
+        "body": "## Limitations and robustness boundary\n\n- This is one electricity dataset and one time-temperature path. It does not establish general forecasting dominance.\n- The headline EFM uses one equal decay rate for both path channels. Channel-specific rates add flexibility and higher computational risk.\n- The stationary EFM idealization uses the infinite past, although the signature itself is also defined on finite intervals. This run initializes the state at zero in 2012. One full year of common context makes the slowest candidate's level-one initialization weight below 2e-20 of its initial value, but does not recreate infinite history.\n- Order `N=6` was fixed from the rolling-window paper before this comparison. That paper explored order and window on the same 2015 data, so 2015 is independent of `H` and Ridge `alpha` selection here, not a pristine holdout for every design choice.\n- Features use the temperature path all the way through the target time. A genuine seven-day-ahead forecast therefore needs a weather forecast for that whole future temperature path. Using the observed path, as here and in the rolling-window paper, makes this a conditional or oracle-temperature evaluation rather than a fully operational forecast.\n- An [author-associated repository](https://github.com/DimitriSotnikov/signature) contains later electricity notebooks, but it is not linked by the paper, has no license, and its saved rolling and EFM transforms use different path dimensions. Those numbers are not used here."
+      },
+      {
+        "id": "next_steps",
+        "type": "markdown",
+        "body": "## Recommended next steps\n\n1. Repeat the controlled grid over orders 3-6 and report an accuracy-versus-update-time frontier.\n2. Add the integrated-temperature path as a separate, capacity-matched experiment.\n3. Run the synthetic generator across many noise seeds; EFM should be tested where the true memory is exponential.\n4. Measure sensitivity to shorter burn-in periods and abrupt regime shifts.\n5. Only then test channel-specific EFM rates with a stable divided-difference or matrix-exponential segment calculation."
+      },
+      {
+        "id": "sources_note",
+        "type": "markdown",
+        "body": "## Source scope\n\nThe [rolling-window paper](https://arxiv.org/abs/2510.12337) supplies the electricity task and RidgeSig design. The [EFM paper v2](https://arxiv.org/abs/2507.03700v2) supplies the fading definition, modified Chen identity, exact linear-segment formula, and mean-reverting interpretation. The EFM paper itself has no electricity experiment; all electricity results in this report were generated by the independent code in this project."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-04T15:41:42+00:00",
+    "status": "ready",
+    "datasets": {
+      "headline": [
+        {
+          "rolling_rmse_mw": 3423.0333968811,
+          "fading_rmse_mw": 3300.7789949874,
+          "rmse_difference_mw": -122.2544018938,
+          "relative_rmse_difference": -0.0357152232,
+          "bootstrap_resample_share_fading_better": 0.9685,
+          "rolling_horizon_days": 13.0,
+          "fading_horizon_days": 17.0
+        }
+      ],
+      "memory_kernel": [
+        {
+          "age_days": 0.0,
+          "series": "Fading level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 0.0,
+          "series": "Fading level 3",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 0.0,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 0.17,
+          "series": "Fading level 1",
+          "relative_weight": 0.954992586
+        },
+        {
+          "age_days": 0.17,
+          "series": "Fading level 3",
+          "relative_weight": 0.87096359
+        },
+        {
+          "age_days": 0.17,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 0.34,
+          "series": "Fading level 1",
+          "relative_weight": 0.9120108394
+        },
+        {
+          "age_days": 0.34,
+          "series": "Fading level 3",
+          "relative_weight": 0.758577575
+        },
+        {
+          "age_days": 0.34,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 0.51,
+          "series": "Fading level 1",
+          "relative_weight": 0.87096359
+        },
+        {
+          "age_days": 0.51,
+          "series": "Fading level 3",
+          "relative_weight": 0.660693448
+        },
+        {
+          "age_days": 0.51,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 0.68,
+          "series": "Fading level 1",
+          "relative_weight": 0.8317637711
+        },
+        {
+          "age_days": 0.68,
+          "series": "Fading level 3",
+          "relative_weight": 0.5754399373
+        },
+        {
+          "age_days": 0.68,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 0.85,
+          "series": "Fading level 1",
+          "relative_weight": 0.7943282347
+        },
+        {
+          "age_days": 0.85,
+          "series": "Fading level 3",
+          "relative_weight": 0.5011872336
+        },
+        {
+          "age_days": 0.85,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 1.02,
+          "series": "Fading level 1",
+          "relative_weight": 0.758577575
+        },
+        {
+          "age_days": 1.02,
+          "series": "Fading level 3",
+          "relative_weight": 0.4365158322
+        },
+        {
+          "age_days": 1.02,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 1.19,
+          "series": "Fading level 1",
+          "relative_weight": 0.7244359601
+        },
+        {
+          "age_days": 1.19,
+          "series": "Fading level 3",
+          "relative_weight": 0.3801893963
+        },
+        {
+          "age_days": 1.19,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 1.36,
+          "series": "Fading level 1",
+          "relative_weight": 0.6918309709
+        },
+        {
+          "age_days": 1.36,
+          "series": "Fading level 3",
+          "relative_weight": 0.3311311215
+        },
+        {
+          "age_days": 1.36,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 1.53,
+          "series": "Fading level 1",
+          "relative_weight": 0.660693448
+        },
+        {
+          "age_days": 1.53,
+          "series": "Fading level 3",
+          "relative_weight": 0.2884031503
+        },
+        {
+          "age_days": 1.53,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 1.7,
+          "series": "Fading level 1",
+          "relative_weight": 0.6309573445
+        },
+        {
+          "age_days": 1.7,
+          "series": "Fading level 3",
+          "relative_weight": 0.2511886432
+        },
+        {
+          "age_days": 1.7,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 1.87,
+          "series": "Fading level 1",
+          "relative_weight": 0.6025595861
+        },
+        {
+          "age_days": 1.87,
+          "series": "Fading level 3",
+          "relative_weight": 0.2187761624
+        },
+        {
+          "age_days": 1.87,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 2.04,
+          "series": "Fading level 1",
+          "relative_weight": 0.5754399373
+        },
+        {
+          "age_days": 2.04,
+          "series": "Fading level 3",
+          "relative_weight": 0.1905460718
+        },
+        {
+          "age_days": 2.04,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 2.21,
+          "series": "Fading level 1",
+          "relative_weight": 0.5495408739
+        },
+        {
+          "age_days": 2.21,
+          "series": "Fading level 3",
+          "relative_weight": 0.1659586907
+        },
+        {
+          "age_days": 2.21,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 2.38,
+          "series": "Fading level 1",
+          "relative_weight": 0.5248074602
+        },
+        {
+          "age_days": 2.38,
+          "series": "Fading level 3",
+          "relative_weight": 0.1445439771
+        },
+        {
+          "age_days": 2.38,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 2.55,
+          "series": "Fading level 1",
+          "relative_weight": 0.5011872336
+        },
+        {
+          "age_days": 2.55,
+          "series": "Fading level 3",
+          "relative_weight": 0.1258925412
+        },
+        {
+          "age_days": 2.55,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 2.72,
+          "series": "Fading level 1",
+          "relative_weight": 0.4786300923
+        },
+        {
+          "age_days": 2.72,
+          "series": "Fading level 3",
+          "relative_weight": 0.1096478196
+        },
+        {
+          "age_days": 2.72,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 2.89,
+          "series": "Fading level 1",
+          "relative_weight": 0.4570881896
+        },
+        {
+          "age_days": 2.89,
+          "series": "Fading level 3",
+          "relative_weight": 0.0954992586
+        },
+        {
+          "age_days": 2.89,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 3.06,
+          "series": "Fading level 1",
+          "relative_weight": 0.4365158322
+        },
+        {
+          "age_days": 3.06,
+          "series": "Fading level 3",
+          "relative_weight": 0.0831763771
+        },
+        {
+          "age_days": 3.06,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 3.23,
+          "series": "Fading level 1",
+          "relative_weight": 0.4168693835
+        },
+        {
+          "age_days": 3.23,
+          "series": "Fading level 3",
+          "relative_weight": 0.072443596
+        },
+        {
+          "age_days": 3.23,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 3.4,
+          "series": "Fading level 1",
+          "relative_weight": 0.3981071706
+        },
+        {
+          "age_days": 3.4,
+          "series": "Fading level 3",
+          "relative_weight": 0.0630957344
+        },
+        {
+          "age_days": 3.4,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 3.57,
+          "series": "Fading level 1",
+          "relative_weight": 0.3801893963
+        },
+        {
+          "age_days": 3.57,
+          "series": "Fading level 3",
+          "relative_weight": 0.0549540874
+        },
+        {
+          "age_days": 3.57,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 3.74,
+          "series": "Fading level 1",
+          "relative_weight": 0.3630780548
+        },
+        {
+          "age_days": 3.74,
+          "series": "Fading level 3",
+          "relative_weight": 0.0478630092
+        },
+        {
+          "age_days": 3.74,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 3.91,
+          "series": "Fading level 1",
+          "relative_weight": 0.3467368505
+        },
+        {
+          "age_days": 3.91,
+          "series": "Fading level 3",
+          "relative_weight": 0.0416869383
+        },
+        {
+          "age_days": 3.91,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 4.08,
+          "series": "Fading level 1",
+          "relative_weight": 0.3311311215
+        },
+        {
+          "age_days": 4.08,
+          "series": "Fading level 3",
+          "relative_weight": 0.0363078055
+        },
+        {
+          "age_days": 4.08,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 4.25,
+          "series": "Fading level 1",
+          "relative_weight": 0.316227766
+        },
+        {
+          "age_days": 4.25,
+          "series": "Fading level 3",
+          "relative_weight": 0.0316227766
+        },
+        {
+          "age_days": 4.25,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 4.42,
+          "series": "Fading level 1",
+          "relative_weight": 0.301995172
+        },
+        {
+          "age_days": 4.42,
+          "series": "Fading level 3",
+          "relative_weight": 0.027542287
+        },
+        {
+          "age_days": 4.42,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 4.59,
+          "series": "Fading level 1",
+          "relative_weight": 0.2884031503
+        },
+        {
+          "age_days": 4.59,
+          "series": "Fading level 3",
+          "relative_weight": 0.0239883292
+        },
+        {
+          "age_days": 4.59,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 4.76,
+          "series": "Fading level 1",
+          "relative_weight": 0.2754228703
+        },
+        {
+          "age_days": 4.76,
+          "series": "Fading level 3",
+          "relative_weight": 0.0208929613
+        },
+        {
+          "age_days": 4.76,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 4.93,
+          "series": "Fading level 1",
+          "relative_weight": 0.2630267992
+        },
+        {
+          "age_days": 4.93,
+          "series": "Fading level 3",
+          "relative_weight": 0.0181970086
+        },
+        {
+          "age_days": 4.93,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 5.1,
+          "series": "Fading level 1",
+          "relative_weight": 0.2511886432
+        },
+        {
+          "age_days": 5.1,
+          "series": "Fading level 3",
+          "relative_weight": 0.0158489319
+        },
+        {
+          "age_days": 5.1,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 5.27,
+          "series": "Fading level 1",
+          "relative_weight": 0.2398832919
+        },
+        {
+          "age_days": 5.27,
+          "series": "Fading level 3",
+          "relative_weight": 0.0138038426
+        },
+        {
+          "age_days": 5.27,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 5.44,
+          "series": "Fading level 1",
+          "relative_weight": 0.2290867653
+        },
+        {
+          "age_days": 5.44,
+          "series": "Fading level 3",
+          "relative_weight": 0.0120226443
+        },
+        {
+          "age_days": 5.44,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 5.61,
+          "series": "Fading level 1",
+          "relative_weight": 0.2187761624
+        },
+        {
+          "age_days": 5.61,
+          "series": "Fading level 3",
+          "relative_weight": 0.0104712855
+        },
+        {
+          "age_days": 5.61,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 5.78,
+          "series": "Fading level 1",
+          "relative_weight": 0.2089296131
+        },
+        {
+          "age_days": 5.78,
+          "series": "Fading level 3",
+          "relative_weight": 0.0091201084
+        },
+        {
+          "age_days": 5.78,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 5.95,
+          "series": "Fading level 1",
+          "relative_weight": 0.1995262315
+        },
+        {
+          "age_days": 5.95,
+          "series": "Fading level 3",
+          "relative_weight": 0.0079432823
+        },
+        {
+          "age_days": 5.95,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 6.12,
+          "series": "Fading level 1",
+          "relative_weight": 0.1905460718
+        },
+        {
+          "age_days": 6.12,
+          "series": "Fading level 3",
+          "relative_weight": 0.0069183097
+        },
+        {
+          "age_days": 6.12,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 6.29,
+          "series": "Fading level 1",
+          "relative_weight": 0.1819700859
+        },
+        {
+          "age_days": 6.29,
+          "series": "Fading level 3",
+          "relative_weight": 0.0060255959
+        },
+        {
+          "age_days": 6.29,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 6.46,
+          "series": "Fading level 1",
+          "relative_weight": 0.1737800829
+        },
+        {
+          "age_days": 6.46,
+          "series": "Fading level 3",
+          "relative_weight": 0.0052480746
+        },
+        {
+          "age_days": 6.46,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 6.63,
+          "series": "Fading level 1",
+          "relative_weight": 0.1659586907
+        },
+        {
+          "age_days": 6.63,
+          "series": "Fading level 3",
+          "relative_weight": 0.0045708819
+        },
+        {
+          "age_days": 6.63,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 6.8,
+          "series": "Fading level 1",
+          "relative_weight": 0.1584893192
+        },
+        {
+          "age_days": 6.8,
+          "series": "Fading level 3",
+          "relative_weight": 0.0039810717
+        },
+        {
+          "age_days": 6.8,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 6.97,
+          "series": "Fading level 1",
+          "relative_weight": 0.1513561248
+        },
+        {
+          "age_days": 6.97,
+          "series": "Fading level 3",
+          "relative_weight": 0.0034673685
+        },
+        {
+          "age_days": 6.97,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 7.14,
+          "series": "Fading level 1",
+          "relative_weight": 0.1445439771
+        },
+        {
+          "age_days": 7.14,
+          "series": "Fading level 3",
+          "relative_weight": 0.0030199517
+        },
+        {
+          "age_days": 7.14,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 7.31,
+          "series": "Fading level 1",
+          "relative_weight": 0.1380384265
+        },
+        {
+          "age_days": 7.31,
+          "series": "Fading level 3",
+          "relative_weight": 0.002630268
+        },
+        {
+          "age_days": 7.31,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 7.48,
+          "series": "Fading level 1",
+          "relative_weight": 0.1318256739
+        },
+        {
+          "age_days": 7.48,
+          "series": "Fading level 3",
+          "relative_weight": 0.0022908677
+        },
+        {
+          "age_days": 7.48,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 7.65,
+          "series": "Fading level 1",
+          "relative_weight": 0.1258925412
+        },
+        {
+          "age_days": 7.65,
+          "series": "Fading level 3",
+          "relative_weight": 0.0019952623
+        },
+        {
+          "age_days": 7.65,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 7.82,
+          "series": "Fading level 1",
+          "relative_weight": 0.1202264435
+        },
+        {
+          "age_days": 7.82,
+          "series": "Fading level 3",
+          "relative_weight": 0.0017378008
+        },
+        {
+          "age_days": 7.82,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 7.99,
+          "series": "Fading level 1",
+          "relative_weight": 0.1148153621
+        },
+        {
+          "age_days": 7.99,
+          "series": "Fading level 3",
+          "relative_weight": 0.0015135612
+        },
+        {
+          "age_days": 7.99,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 8.16,
+          "series": "Fading level 1",
+          "relative_weight": 0.1096478196
+        },
+        {
+          "age_days": 8.16,
+          "series": "Fading level 3",
+          "relative_weight": 0.0013182567
+        },
+        {
+          "age_days": 8.16,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 8.33,
+          "series": "Fading level 1",
+          "relative_weight": 0.1047128548
+        },
+        {
+          "age_days": 8.33,
+          "series": "Fading level 3",
+          "relative_weight": 0.0011481536
+        },
+        {
+          "age_days": 8.33,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 8.5,
+          "series": "Fading level 1",
+          "relative_weight": 0.1
+        },
+        {
+          "age_days": 8.5,
+          "series": "Fading level 3",
+          "relative_weight": 0.001
+        },
+        {
+          "age_days": 8.5,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 8.67,
+          "series": "Fading level 1",
+          "relative_weight": 0.0954992586
+        },
+        {
+          "age_days": 8.67,
+          "series": "Fading level 3",
+          "relative_weight": 0.0008709636
+        },
+        {
+          "age_days": 8.67,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 8.84,
+          "series": "Fading level 1",
+          "relative_weight": 0.0912010839
+        },
+        {
+          "age_days": 8.84,
+          "series": "Fading level 3",
+          "relative_weight": 0.0007585776
+        },
+        {
+          "age_days": 8.84,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 9.01,
+          "series": "Fading level 1",
+          "relative_weight": 0.087096359
+        },
+        {
+          "age_days": 9.01,
+          "series": "Fading level 3",
+          "relative_weight": 0.0006606934
+        },
+        {
+          "age_days": 9.01,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 9.18,
+          "series": "Fading level 1",
+          "relative_weight": 0.0831763771
+        },
+        {
+          "age_days": 9.18,
+          "series": "Fading level 3",
+          "relative_weight": 0.0005754399
+        },
+        {
+          "age_days": 9.18,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 9.35,
+          "series": "Fading level 1",
+          "relative_weight": 0.0794328235
+        },
+        {
+          "age_days": 9.35,
+          "series": "Fading level 3",
+          "relative_weight": 0.0005011872
+        },
+        {
+          "age_days": 9.35,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 9.52,
+          "series": "Fading level 1",
+          "relative_weight": 0.0758577575
+        },
+        {
+          "age_days": 9.52,
+          "series": "Fading level 3",
+          "relative_weight": 0.0004365158
+        },
+        {
+          "age_days": 9.52,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 9.69,
+          "series": "Fading level 1",
+          "relative_weight": 0.072443596
+        },
+        {
+          "age_days": 9.69,
+          "series": "Fading level 3",
+          "relative_weight": 0.0003801894
+        },
+        {
+          "age_days": 9.69,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 9.86,
+          "series": "Fading level 1",
+          "relative_weight": 0.0691830971
+        },
+        {
+          "age_days": 9.86,
+          "series": "Fading level 3",
+          "relative_weight": 0.0003311311
+        },
+        {
+          "age_days": 9.86,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 10.03,
+          "series": "Fading level 1",
+          "relative_weight": 0.0660693448
+        },
+        {
+          "age_days": 10.03,
+          "series": "Fading level 3",
+          "relative_weight": 0.0002884032
+        },
+        {
+          "age_days": 10.03,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 10.2,
+          "series": "Fading level 1",
+          "relative_weight": 0.0630957344
+        },
+        {
+          "age_days": 10.2,
+          "series": "Fading level 3",
+          "relative_weight": 0.0002511886
+        },
+        {
+          "age_days": 10.2,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 10.37,
+          "series": "Fading level 1",
+          "relative_weight": 0.0602559586
+        },
+        {
+          "age_days": 10.37,
+          "series": "Fading level 3",
+          "relative_weight": 0.0002187762
+        },
+        {
+          "age_days": 10.37,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 10.54,
+          "series": "Fading level 1",
+          "relative_weight": 0.0575439937
+        },
+        {
+          "age_days": 10.54,
+          "series": "Fading level 3",
+          "relative_weight": 0.0001905461
+        },
+        {
+          "age_days": 10.54,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 10.71,
+          "series": "Fading level 1",
+          "relative_weight": 0.0549540874
+        },
+        {
+          "age_days": 10.71,
+          "series": "Fading level 3",
+          "relative_weight": 0.0001659587
+        },
+        {
+          "age_days": 10.71,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 10.88,
+          "series": "Fading level 1",
+          "relative_weight": 0.052480746
+        },
+        {
+          "age_days": 10.88,
+          "series": "Fading level 3",
+          "relative_weight": 0.000144544
+        },
+        {
+          "age_days": 10.88,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 11.05,
+          "series": "Fading level 1",
+          "relative_weight": 0.0501187234
+        },
+        {
+          "age_days": 11.05,
+          "series": "Fading level 3",
+          "relative_weight": 0.0001258925
+        },
+        {
+          "age_days": 11.05,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 11.22,
+          "series": "Fading level 1",
+          "relative_weight": 0.0478630092
+        },
+        {
+          "age_days": 11.22,
+          "series": "Fading level 3",
+          "relative_weight": 0.0001096478
+        },
+        {
+          "age_days": 11.22,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 11.39,
+          "series": "Fading level 1",
+          "relative_weight": 0.045708819
+        },
+        {
+          "age_days": 11.39,
+          "series": "Fading level 3",
+          "relative_weight": 9.54993e-05
+        },
+        {
+          "age_days": 11.39,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 11.56,
+          "series": "Fading level 1",
+          "relative_weight": 0.0436515832
+        },
+        {
+          "age_days": 11.56,
+          "series": "Fading level 3",
+          "relative_weight": 8.31764e-05
+        },
+        {
+          "age_days": 11.56,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 11.73,
+          "series": "Fading level 1",
+          "relative_weight": 0.0416869383
+        },
+        {
+          "age_days": 11.73,
+          "series": "Fading level 3",
+          "relative_weight": 7.24436e-05
+        },
+        {
+          "age_days": 11.73,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 11.9,
+          "series": "Fading level 1",
+          "relative_weight": 0.0398107171
+        },
+        {
+          "age_days": 11.9,
+          "series": "Fading level 3",
+          "relative_weight": 6.30957e-05
+        },
+        {
+          "age_days": 11.9,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 12.07,
+          "series": "Fading level 1",
+          "relative_weight": 0.0380189396
+        },
+        {
+          "age_days": 12.07,
+          "series": "Fading level 3",
+          "relative_weight": 5.49541e-05
+        },
+        {
+          "age_days": 12.07,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 12.24,
+          "series": "Fading level 1",
+          "relative_weight": 0.0363078055
+        },
+        {
+          "age_days": 12.24,
+          "series": "Fading level 3",
+          "relative_weight": 4.7863e-05
+        },
+        {
+          "age_days": 12.24,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 12.41,
+          "series": "Fading level 1",
+          "relative_weight": 0.034673685
+        },
+        {
+          "age_days": 12.41,
+          "series": "Fading level 3",
+          "relative_weight": 4.16869e-05
+        },
+        {
+          "age_days": 12.41,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 12.58,
+          "series": "Fading level 1",
+          "relative_weight": 0.0331131121
+        },
+        {
+          "age_days": 12.58,
+          "series": "Fading level 3",
+          "relative_weight": 3.63078e-05
+        },
+        {
+          "age_days": 12.58,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 12.75,
+          "series": "Fading level 1",
+          "relative_weight": 0.0316227766
+        },
+        {
+          "age_days": 12.75,
+          "series": "Fading level 3",
+          "relative_weight": 3.16228e-05
+        },
+        {
+          "age_days": 12.75,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 12.92,
+          "series": "Fading level 1",
+          "relative_weight": 0.0301995172
+        },
+        {
+          "age_days": 12.92,
+          "series": "Fading level 3",
+          "relative_weight": 2.75423e-05
+        },
+        {
+          "age_days": 12.92,
+          "series": "Rolling level 1",
+          "relative_weight": 1.0
+        },
+        {
+          "age_days": 13.09,
+          "series": "Fading level 1",
+          "relative_weight": 0.028840315
+        },
+        {
+          "age_days": 13.09,
+          "series": "Fading level 3",
+          "relative_weight": 2.39883e-05
+        },
+        {
+          "age_days": 13.09,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 13.26,
+          "series": "Fading level 1",
+          "relative_weight": 0.027542287
+        },
+        {
+          "age_days": 13.26,
+          "series": "Fading level 3",
+          "relative_weight": 2.0893e-05
+        },
+        {
+          "age_days": 13.26,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 13.43,
+          "series": "Fading level 1",
+          "relative_weight": 0.0263026799
+        },
+        {
+          "age_days": 13.43,
+          "series": "Fading level 3",
+          "relative_weight": 1.8197e-05
+        },
+        {
+          "age_days": 13.43,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 13.6,
+          "series": "Fading level 1",
+          "relative_weight": 0.0251188643
+        },
+        {
+          "age_days": 13.6,
+          "series": "Fading level 3",
+          "relative_weight": 1.58489e-05
+        },
+        {
+          "age_days": 13.6,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 13.77,
+          "series": "Fading level 1",
+          "relative_weight": 0.0239883292
+        },
+        {
+          "age_days": 13.77,
+          "series": "Fading level 3",
+          "relative_weight": 1.38038e-05
+        },
+        {
+          "age_days": 13.77,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 13.94,
+          "series": "Fading level 1",
+          "relative_weight": 0.0229086765
+        },
+        {
+          "age_days": 13.94,
+          "series": "Fading level 3",
+          "relative_weight": 1.20226e-05
+        },
+        {
+          "age_days": 13.94,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 14.11,
+          "series": "Fading level 1",
+          "relative_weight": 0.0218776162
+        },
+        {
+          "age_days": 14.11,
+          "series": "Fading level 3",
+          "relative_weight": 1.04713e-05
+        },
+        {
+          "age_days": 14.11,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 14.28,
+          "series": "Fading level 1",
+          "relative_weight": 0.0208929613
+        },
+        {
+          "age_days": 14.28,
+          "series": "Fading level 3",
+          "relative_weight": 9.1201e-06
+        },
+        {
+          "age_days": 14.28,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 14.45,
+          "series": "Fading level 1",
+          "relative_weight": 0.0199526231
+        },
+        {
+          "age_days": 14.45,
+          "series": "Fading level 3",
+          "relative_weight": 7.9433e-06
+        },
+        {
+          "age_days": 14.45,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 14.62,
+          "series": "Fading level 1",
+          "relative_weight": 0.0190546072
+        },
+        {
+          "age_days": 14.62,
+          "series": "Fading level 3",
+          "relative_weight": 6.9183e-06
+        },
+        {
+          "age_days": 14.62,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 14.79,
+          "series": "Fading level 1",
+          "relative_weight": 0.0181970086
+        },
+        {
+          "age_days": 14.79,
+          "series": "Fading level 3",
+          "relative_weight": 6.0256e-06
+        },
+        {
+          "age_days": 14.79,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 14.96,
+          "series": "Fading level 1",
+          "relative_weight": 0.0173780083
+        },
+        {
+          "age_days": 14.96,
+          "series": "Fading level 3",
+          "relative_weight": 5.2481e-06
+        },
+        {
+          "age_days": 14.96,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 15.13,
+          "series": "Fading level 1",
+          "relative_weight": 0.0165958691
+        },
+        {
+          "age_days": 15.13,
+          "series": "Fading level 3",
+          "relative_weight": 4.5709e-06
+        },
+        {
+          "age_days": 15.13,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 15.3,
+          "series": "Fading level 1",
+          "relative_weight": 0.0158489319
+        },
+        {
+          "age_days": 15.3,
+          "series": "Fading level 3",
+          "relative_weight": 3.9811e-06
+        },
+        {
+          "age_days": 15.3,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 15.47,
+          "series": "Fading level 1",
+          "relative_weight": 0.0151356125
+        },
+        {
+          "age_days": 15.47,
+          "series": "Fading level 3",
+          "relative_weight": 3.4674e-06
+        },
+        {
+          "age_days": 15.47,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 15.64,
+          "series": "Fading level 1",
+          "relative_weight": 0.0144543977
+        },
+        {
+          "age_days": 15.64,
+          "series": "Fading level 3",
+          "relative_weight": 3.02e-06
+        },
+        {
+          "age_days": 15.64,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 15.81,
+          "series": "Fading level 1",
+          "relative_weight": 0.0138038426
+        },
+        {
+          "age_days": 15.81,
+          "series": "Fading level 3",
+          "relative_weight": 2.6303e-06
+        },
+        {
+          "age_days": 15.81,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 15.98,
+          "series": "Fading level 1",
+          "relative_weight": 0.0131825674
+        },
+        {
+          "age_days": 15.98,
+          "series": "Fading level 3",
+          "relative_weight": 2.2909e-06
+        },
+        {
+          "age_days": 15.98,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 16.15,
+          "series": "Fading level 1",
+          "relative_weight": 0.0125892541
+        },
+        {
+          "age_days": 16.15,
+          "series": "Fading level 3",
+          "relative_weight": 1.9953e-06
+        },
+        {
+          "age_days": 16.15,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 16.32,
+          "series": "Fading level 1",
+          "relative_weight": 0.0120226443
+        },
+        {
+          "age_days": 16.32,
+          "series": "Fading level 3",
+          "relative_weight": 1.7378e-06
+        },
+        {
+          "age_days": 16.32,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 16.49,
+          "series": "Fading level 1",
+          "relative_weight": 0.0114815362
+        },
+        {
+          "age_days": 16.49,
+          "series": "Fading level 3",
+          "relative_weight": 1.5136e-06
+        },
+        {
+          "age_days": 16.49,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 16.66,
+          "series": "Fading level 1",
+          "relative_weight": 0.010964782
+        },
+        {
+          "age_days": 16.66,
+          "series": "Fading level 3",
+          "relative_weight": 1.3183e-06
+        },
+        {
+          "age_days": 16.66,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 16.83,
+          "series": "Fading level 1",
+          "relative_weight": 0.0104712855
+        },
+        {
+          "age_days": 16.83,
+          "series": "Fading level 3",
+          "relative_weight": 1.1482e-06
+        },
+        {
+          "age_days": 16.83,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 17.0,
+          "series": "Fading level 1",
+          "relative_weight": 0.01
+        },
+        {
+          "age_days": 17.0,
+          "series": "Fading level 3",
+          "relative_weight": 1e-06
+        },
+        {
+          "age_days": 17.0,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 17.17,
+          "series": "Fading level 1",
+          "relative_weight": 0.0095499259
+        },
+        {
+          "age_days": 17.17,
+          "series": "Fading level 3",
+          "relative_weight": 8.71e-07
+        },
+        {
+          "age_days": 17.17,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 17.34,
+          "series": "Fading level 1",
+          "relative_weight": 0.0091201084
+        },
+        {
+          "age_days": 17.34,
+          "series": "Fading level 3",
+          "relative_weight": 7.586e-07
+        },
+        {
+          "age_days": 17.34,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 17.51,
+          "series": "Fading level 1",
+          "relative_weight": 0.0087096359
+        },
+        {
+          "age_days": 17.51,
+          "series": "Fading level 3",
+          "relative_weight": 6.607e-07
+        },
+        {
+          "age_days": 17.51,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 17.68,
+          "series": "Fading level 1",
+          "relative_weight": 0.0083176377
+        },
+        {
+          "age_days": 17.68,
+          "series": "Fading level 3",
+          "relative_weight": 5.754e-07
+        },
+        {
+          "age_days": 17.68,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 17.85,
+          "series": "Fading level 1",
+          "relative_weight": 0.0079432823
+        },
+        {
+          "age_days": 17.85,
+          "series": "Fading level 3",
+          "relative_weight": 5.012e-07
+        },
+        {
+          "age_days": 17.85,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 18.02,
+          "series": "Fading level 1",
+          "relative_weight": 0.0075857758
+        },
+        {
+          "age_days": 18.02,
+          "series": "Fading level 3",
+          "relative_weight": 4.365e-07
+        },
+        {
+          "age_days": 18.02,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 18.19,
+          "series": "Fading level 1",
+          "relative_weight": 0.0072443596
+        },
+        {
+          "age_days": 18.19,
+          "series": "Fading level 3",
+          "relative_weight": 3.802e-07
+        },
+        {
+          "age_days": 18.19,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 18.36,
+          "series": "Fading level 1",
+          "relative_weight": 0.0069183097
+        },
+        {
+          "age_days": 18.36,
+          "series": "Fading level 3",
+          "relative_weight": 3.311e-07
+        },
+        {
+          "age_days": 18.36,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 18.53,
+          "series": "Fading level 1",
+          "relative_weight": 0.0066069345
+        },
+        {
+          "age_days": 18.53,
+          "series": "Fading level 3",
+          "relative_weight": 2.884e-07
+        },
+        {
+          "age_days": 18.53,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 18.7,
+          "series": "Fading level 1",
+          "relative_weight": 0.0063095734
+        },
+        {
+          "age_days": 18.7,
+          "series": "Fading level 3",
+          "relative_weight": 2.512e-07
+        },
+        {
+          "age_days": 18.7,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 18.87,
+          "series": "Fading level 1",
+          "relative_weight": 0.0060255959
+        },
+        {
+          "age_days": 18.87,
+          "series": "Fading level 3",
+          "relative_weight": 2.188e-07
+        },
+        {
+          "age_days": 18.87,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 19.04,
+          "series": "Fading level 1",
+          "relative_weight": 0.0057543994
+        },
+        {
+          "age_days": 19.04,
+          "series": "Fading level 3",
+          "relative_weight": 1.905e-07
+        },
+        {
+          "age_days": 19.04,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 19.21,
+          "series": "Fading level 1",
+          "relative_weight": 0.0054954087
+        },
+        {
+          "age_days": 19.21,
+          "series": "Fading level 3",
+          "relative_weight": 1.66e-07
+        },
+        {
+          "age_days": 19.21,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 19.38,
+          "series": "Fading level 1",
+          "relative_weight": 0.0052480746
+        },
+        {
+          "age_days": 19.38,
+          "series": "Fading level 3",
+          "relative_weight": 1.445e-07
+        },
+        {
+          "age_days": 19.38,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 19.55,
+          "series": "Fading level 1",
+          "relative_weight": 0.0050118723
+        },
+        {
+          "age_days": 19.55,
+          "series": "Fading level 3",
+          "relative_weight": 1.259e-07
+        },
+        {
+          "age_days": 19.55,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 19.72,
+          "series": "Fading level 1",
+          "relative_weight": 0.0047863009
+        },
+        {
+          "age_days": 19.72,
+          "series": "Fading level 3",
+          "relative_weight": 1.096e-07
+        },
+        {
+          "age_days": 19.72,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 19.89,
+          "series": "Fading level 1",
+          "relative_weight": 0.0045708819
+        },
+        {
+          "age_days": 19.89,
+          "series": "Fading level 3",
+          "relative_weight": 9.55e-08
+        },
+        {
+          "age_days": 19.89,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 20.06,
+          "series": "Fading level 1",
+          "relative_weight": 0.0043651583
+        },
+        {
+          "age_days": 20.06,
+          "series": "Fading level 3",
+          "relative_weight": 8.32e-08
+        },
+        {
+          "age_days": 20.06,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 20.23,
+          "series": "Fading level 1",
+          "relative_weight": 0.0041686938
+        },
+        {
+          "age_days": 20.23,
+          "series": "Fading level 3",
+          "relative_weight": 7.24e-08
+        },
+        {
+          "age_days": 20.23,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        },
+        {
+          "age_days": 20.4,
+          "series": "Fading level 1",
+          "relative_weight": 0.0039810717
+        },
+        {
+          "age_days": 20.4,
+          "series": "Fading level 3",
+          "relative_weight": 6.31e-08
+        },
+        {
+          "age_days": 20.4,
+          "series": "Rolling level 1",
+          "relative_weight": 0.0
+        }
+      ],
+      "validation_sweep": [
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 7,
+          "validation_rmse_mw": 3450.4821302975,
+          "selected_ridge_penalty": 31622.7766016838
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 7,
+          "validation_rmse_mw": 3343.3929411998,
+          "selected_ridge_penalty": 1778.2794100389
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 8,
+          "validation_rmse_mw": 3404.4709840949,
+          "selected_ridge_penalty": 17782.7941003892
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 8,
+          "validation_rmse_mw": 3342.033016185,
+          "selected_ridge_penalty": 177827.9410038923
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 9,
+          "validation_rmse_mw": 3368.2144559989,
+          "selected_ridge_penalty": 17782.7941003892
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 9,
+          "validation_rmse_mw": 3340.33087108,
+          "selected_ridge_penalty": 177827.9410038923
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 10,
+          "validation_rmse_mw": 3341.7499947858,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 10,
+          "validation_rmse_mw": 3335.6676915178,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 11,
+          "validation_rmse_mw": 3318.8110584404,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 11,
+          "validation_rmse_mw": 3335.0124081153,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 12,
+          "validation_rmse_mw": 3302.4883403084,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 12,
+          "validation_rmse_mw": 3306.8674235678,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 13,
+          "validation_rmse_mw": 3291.1404273673,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 13,
+          "validation_rmse_mw": 3289.6418775785,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 14,
+          "validation_rmse_mw": 3283.5228818691,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 14,
+          "validation_rmse_mw": 3294.7919665712,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 15,
+          "validation_rmse_mw": 3277.1569895907,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 15,
+          "validation_rmse_mw": 3322.2194755738,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 16,
+          "validation_rmse_mw": 3273.8586606975,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 16,
+          "validation_rmse_mw": 3336.5772138836,
+          "selected_ridge_penalty": 31622.7766016838
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 17,
+          "validation_rmse_mw": 3273.1869445391,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 17,
+          "validation_rmse_mw": 3338.3746930729,
+          "selected_ridge_penalty": 31622.7766016838
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 18,
+          "validation_rmse_mw": 3274.6745274511,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 18,
+          "validation_rmse_mw": 3339.3064325111,
+          "selected_ridge_penalty": 56234.1325190349
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 19,
+          "validation_rmse_mw": 3277.836184288,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 19,
+          "validation_rmse_mw": 3339.8677018738,
+          "selected_ridge_penalty": 31622.7766016838
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 20,
+          "validation_rmse_mw": 3282.1748906686,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 20,
+          "validation_rmse_mw": 3330.2955742188,
+          "selected_ridge_penalty": 31622.7766016838
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 21,
+          "validation_rmse_mw": 3286.98629515,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 21,
+          "validation_rmse_mw": 3309.3301803414,
+          "selected_ridge_penalty": 17782.7941003892
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 22,
+          "validation_rmse_mw": 3291.6608704532,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 22,
+          "validation_rmse_mw": 3303.9206810214,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 23,
+          "validation_rmse_mw": 3296.532889283,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 23,
+          "validation_rmse_mw": 3312.8611668865,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 24,
+          "validation_rmse_mw": 3301.3835933176,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 24,
+          "validation_rmse_mw": 3311.3707536927,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 25,
+          "validation_rmse_mw": 3306.0385183259,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 25,
+          "validation_rmse_mw": 3293.4942399511,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 26,
+          "validation_rmse_mw": 3310.364330102,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 26,
+          "validation_rmse_mw": 3299.526643655,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 27,
+          "validation_rmse_mw": 3314.2628422654,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 27,
+          "validation_rmse_mw": 3333.4261562,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 28,
+          "validation_rmse_mw": 3317.6646228958,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 28,
+          "validation_rmse_mw": 3354.0489855477,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 29,
+          "validation_rmse_mw": 3320.5234121865,
+          "selected_ridge_penalty": 10000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 29,
+          "validation_rmse_mw": 3350.716139568,
+          "selected_ridge_penalty": 1000.0
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 30,
+          "validation_rmse_mw": 3319.3480674107,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 30,
+          "validation_rmse_mw": 3366.6227346648,
+          "selected_ridge_penalty": 1000.0
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 31,
+          "validation_rmse_mw": 3317.5488700122,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 31,
+          "validation_rmse_mw": 3367.5625727975,
+          "selected_ridge_penalty": 1778.2794100389
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 32,
+          "validation_rmse_mw": 3315.8009871404,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 32,
+          "validation_rmse_mw": 3346.0510118297,
+          "selected_ridge_penalty": 5623.4132519035
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 33,
+          "validation_rmse_mw": 3314.0977024072,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 33,
+          "validation_rmse_mw": 3333.1297821407,
+          "selected_ridge_penalty": 3162.2776601684
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 34,
+          "validation_rmse_mw": 3312.4313976843,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 34,
+          "validation_rmse_mw": 3345.9589756527,
+          "selected_ridge_penalty": 1778.2794100389
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 35,
+          "validation_rmse_mw": 3310.7941537653,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 35,
+          "validation_rmse_mw": 3334.0674543451,
+          "selected_ridge_penalty": 1778.2794100389
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 36,
+          "validation_rmse_mw": 3309.1782130869,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 36,
+          "validation_rmse_mw": 3325.1235890352,
+          "selected_ridge_penalty": 1778.2794100389
+        },
+        {
+          "series": "Fading 1% horizon",
+          "parameter_days": 37,
+          "validation_rmse_mw": 3307.5763280186,
+          "selected_ridge_penalty": 100000.0
+        },
+        {
+          "series": "Rolling window",
+          "parameter_days": 37,
+          "validation_rmse_mw": 3371.9547432177,
+          "selected_ridge_penalty": 1778.2794100389
+        }
+      ],
+      "test_metrics": [
+        {
+          "method_short": "Fading",
+          "selected_parameter_days": 17.0,
+          "selected_ridge_penalty": 5623.4132519035,
+          "test_rmse_mw": 3300.7789949874,
+          "test_mae_mw": 2426.7426512515,
+          "test_mape_percent": 4.6374124273
+        },
+        {
+          "method_short": "Rolling",
+          "selected_parameter_days": 13.0,
+          "selected_ridge_penalty": 5623.4132519035,
+          "test_rmse_mw": 3423.0333968811,
+          "test_mae_mw": 2538.9260380661,
+          "test_mape_percent": 4.8793202632
+        }
+      ],
+      "seasonal_metrics": [
+        {
+          "season": "Winter (DJF)",
+          "season_order": 1,
+          "series": "Fading memory",
+          "rmse_mw": 3567.136274915,
+          "mae_mw": 2681.8508831165,
+          "mape_percent": 4.1440720778
+        },
+        {
+          "season": "Winter (DJF)",
+          "season_order": 1,
+          "series": "Rolling window",
+          "rmse_mw": 3484.6485263738,
+          "mae_mw": 2572.921949845,
+          "mape_percent": 3.9929561316
+        },
+        {
+          "season": "Spring (MAM)",
+          "season_order": 2,
+          "series": "Fading memory",
+          "rmse_mw": 3340.1468123051,
+          "mae_mw": 2409.6194611908,
+          "mape_percent": 4.6940218124
+        },
+        {
+          "season": "Spring (MAM)",
+          "season_order": 2,
+          "series": "Rolling window",
+          "rmse_mw": 3541.7773645501,
+          "mae_mw": 2561.743732157,
+          "mape_percent": 4.953703718
+        },
+        {
+          "season": "Summer (JJA)",
+          "season_order": 3,
+          "series": "Fading memory",
+          "rmse_mw": 3679.9612223087,
+          "mae_mw": 2844.0934650022,
+          "mape_percent": 6.3380066692
+        },
+        {
+          "season": "Summer (JJA)",
+          "season_order": 3,
+          "series": "Rolling window",
+          "rmse_mw": 3822.9791394618,
+          "mae_mw": 3023.2017748129,
+          "mape_percent": 6.762734874
+        },
+        {
+          "season": "Autumn (SON)",
+          "season_order": 4,
+          "series": "Fading memory",
+          "rmse_mw": 2479.0226320599,
+          "mae_mw": 1769.8120771048,
+          "mape_percent": 3.3488178974
+        },
+        {
+          "season": "Autumn (SON)",
+          "season_order": 4,
+          "series": "Rolling window",
+          "rmse_mw": 2744.1285304011,
+          "mae_mw": 1992.6378216138,
+          "mape_percent": 3.7766317998
+        }
+      ],
+      "forecast_examples": [
+        {
+          "datetime": "2015-07-06T00:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44078.3871137717
+        },
+        {
+          "datetime": "2015-07-06T00:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 46386.0
+        },
+        {
+          "datetime": "2015-07-06T00:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 44890.8091277227
+        },
+        {
+          "datetime": "2015-07-06T02:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 37689.9814847653
+        },
+        {
+          "datetime": "2015-07-06T02:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39374.0
+        },
+        {
+          "datetime": "2015-07-06T02:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 38241.2573126905
+        },
+        {
+          "datetime": "2015-07-06T04:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 33965.3174822849
+        },
+        {
+          "datetime": "2015-07-06T04:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 36208.0
+        },
+        {
+          "datetime": "2015-07-06T04:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 34664.1496688573
+        },
+        {
+          "datetime": "2015-07-06T06:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 36315.8450132217
+        },
+        {
+          "datetime": "2015-07-06T06:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39283.0
+        },
+        {
+          "datetime": "2015-07-06T06:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 37482.8171759283
+        },
+        {
+          "datetime": "2015-07-06T08:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 45801.3299235259
+        },
+        {
+          "datetime": "2015-07-06T08:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 47527.0
+        },
+        {
+          "datetime": "2015-07-06T08:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 46976.8767835883
+        },
+        {
+          "datetime": "2015-07-06T10:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 51867.2368185337
+        },
+        {
+          "datetime": "2015-07-06T10:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 53621.0
+        },
+        {
+          "datetime": "2015-07-06T10:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 52792.1914123242
+        },
+        {
+          "datetime": "2015-07-06T12:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 55595.8526305259
+        },
+        {
+          "datetime": "2015-07-06T12:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 56659.0
+        },
+        {
+          "datetime": "2015-07-06T12:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 56596.7362532394
+        },
+        {
+          "datetime": "2015-07-06T14:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 56385.7522004508
+        },
+        {
+          "datetime": "2015-07-06T14:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 56797.0
+        },
+        {
+          "datetime": "2015-07-06T14:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 57518.0308411681
+        },
+        {
+          "datetime": "2015-07-06T16:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 55031.1810130968
+        },
+        {
+          "datetime": "2015-07-06T16:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 55421.0
+        },
+        {
+          "datetime": "2015-07-06T16:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 55884.0739380733
+        },
+        {
+          "datetime": "2015-07-06T18:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 53237.9506740418
+        },
+        {
+          "datetime": "2015-07-06T18:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 53872.0
+        },
+        {
+          "datetime": "2015-07-06T18:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 53422.4194692425
+        },
+        {
+          "datetime": "2015-07-06T20:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 51196.1441029949
+        },
+        {
+          "datetime": "2015-07-06T20:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 52785.0
+        },
+        {
+          "datetime": "2015-07-06T20:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 50436.1017442243
+        },
+        {
+          "datetime": "2015-07-06T22:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 46955.2976136555
+        },
+        {
+          "datetime": "2015-07-06T22:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 49340.0
+        },
+        {
+          "datetime": "2015-07-06T22:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 46228.735916007
+        },
+        {
+          "datetime": "2015-07-07T00:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 49035.8540692009
+        },
+        {
+          "datetime": "2015-07-07T00:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 50950.0
+        },
+        {
+          "datetime": "2015-07-07T00:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 48187.8014239055
+        },
+        {
+          "datetime": "2015-07-07T02:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 41439.5998790661
+        },
+        {
+          "datetime": "2015-07-07T02:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 43545.0
+        },
+        {
+          "datetime": "2015-07-07T02:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 40276.5931686179
+        },
+        {
+          "datetime": "2015-07-07T04:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 37376.705253911
+        },
+        {
+          "datetime": "2015-07-07T04:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39939.0
+        },
+        {
+          "datetime": "2015-07-07T04:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 36792.9033035815
+        },
+        {
+          "datetime": "2015-07-07T06:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 38990.6096481624
+        },
+        {
+          "datetime": "2015-07-07T06:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 41747.0
+        },
+        {
+          "datetime": "2015-07-07T06:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 39515.2055870432
+        },
+        {
+          "datetime": "2015-07-07T08:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 48505.2873891397
+        },
+        {
+          "datetime": "2015-07-07T08:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 49545.0
+        },
+        {
+          "datetime": "2015-07-07T08:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 49616.3670569332
+        },
+        {
+          "datetime": "2015-07-07T10:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 54038.9924303702
+        },
+        {
+          "datetime": "2015-07-07T10:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 55722.0
+        },
+        {
+          "datetime": "2015-07-07T10:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 55400.1963289024
+        },
+        {
+          "datetime": "2015-07-07T12:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 57004.03938845
+        },
+        {
+          "datetime": "2015-07-07T12:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 58681.0
+        },
+        {
+          "datetime": "2015-07-07T12:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 58634.0008203204
+        },
+        {
+          "datetime": "2015-07-07T14:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 56761.5456015856
+        },
+        {
+          "datetime": "2015-07-07T14:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 58024.0
+        },
+        {
+          "datetime": "2015-07-07T14:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 58274.78265789
+        },
+        {
+          "datetime": "2015-07-07T16:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 54930.2588945876
+        },
+        {
+          "datetime": "2015-07-07T16:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 55918.0
+        },
+        {
+          "datetime": "2015-07-07T16:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 56199.4024219178
+        },
+        {
+          "datetime": "2015-07-07T18:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 53081.5463023716
+        },
+        {
+          "datetime": "2015-07-07T18:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 53953.0
+        },
+        {
+          "datetime": "2015-07-07T18:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 54172.0468932697
+        },
+        {
+          "datetime": "2015-07-07T20:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 51452.3381692648
+        },
+        {
+          "datetime": "2015-07-07T20:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 52419.0
+        },
+        {
+          "datetime": "2015-07-07T20:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 52450.7147794265
+        },
+        {
+          "datetime": "2015-07-07T22:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 47290.5679751666
+        },
+        {
+          "datetime": "2015-07-07T22:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 48811.0
+        },
+        {
+          "datetime": "2015-07-07T22:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 48342.4606990869
+        },
+        {
+          "datetime": "2015-07-08T00:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 48602.3698347935
+        },
+        {
+          "datetime": "2015-07-08T00:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 50457.0
+        },
+        {
+          "datetime": "2015-07-08T00:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 49383.9286811237
+        },
+        {
+          "datetime": "2015-07-08T02:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 41487.6138964436
+        },
+        {
+          "datetime": "2015-07-08T02:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 43130.0
+        },
+        {
+          "datetime": "2015-07-08T02:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 41744.0525152702
+        },
+        {
+          "datetime": "2015-07-08T04:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 38628.2925539413
+        },
+        {
+          "datetime": "2015-07-08T04:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39696.0
+        },
+        {
+          "datetime": "2015-07-08T04:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 38923.6507734437
+        },
+        {
+          "datetime": "2015-07-08T06:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 40677.9170172216
+        },
+        {
+          "datetime": "2015-07-08T06:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 41587.0
+        },
+        {
+          "datetime": "2015-07-08T06:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 41506.969708824
+        },
+        {
+          "datetime": "2015-07-08T08:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 49434.1640533111
+        },
+        {
+          "datetime": "2015-07-08T08:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 49015.0
+        },
+        {
+          "datetime": "2015-07-08T08:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 50682.2380106949
+        },
+        {
+          "datetime": "2015-07-08T10:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 55398.0480454724
+        },
+        {
+          "datetime": "2015-07-08T10:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 54062.0
+        },
+        {
+          "datetime": "2015-07-08T10:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 56582.4497949046
+        },
+        {
+          "datetime": "2015-07-08T12:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 58479.6777018808
+        },
+        {
+          "datetime": "2015-07-08T12:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 56334.0
+        },
+        {
+          "datetime": "2015-07-08T12:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 59564.3170082255
+        },
+        {
+          "datetime": "2015-07-08T14:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 58240.9487843862
+        },
+        {
+          "datetime": "2015-07-08T14:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 55317.0
+        },
+        {
+          "datetime": "2015-07-08T14:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 59179.4066310412
+        },
+        {
+          "datetime": "2015-07-08T16:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 56533.6446988637
+        },
+        {
+          "datetime": "2015-07-08T16:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 53202.0
+        },
+        {
+          "datetime": "2015-07-08T16:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 57310.7087120954
+        },
+        {
+          "datetime": "2015-07-08T18:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 54976.6345013638
+        },
+        {
+          "datetime": "2015-07-08T18:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 51439.0
+        },
+        {
+          "datetime": "2015-07-08T18:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 55649.2549269991
+        },
+        {
+          "datetime": "2015-07-08T20:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 53611.8477659094
+        },
+        {
+          "datetime": "2015-07-08T20:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 50820.0
+        },
+        {
+          "datetime": "2015-07-08T20:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 54426.8812738652
+        },
+        {
+          "datetime": "2015-07-08T22:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 50289.666826221
+        },
+        {
+          "datetime": "2015-07-08T22:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 47454.0
+        },
+        {
+          "datetime": "2015-07-08T22:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 51186.7413014915
+        },
+        {
+          "datetime": "2015-07-09T00:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 52584.4300752764
+        },
+        {
+          "datetime": "2015-07-09T00:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 49441.0
+        },
+        {
+          "datetime": "2015-07-09T00:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 53114.5437508082
+        },
+        {
+          "datetime": "2015-07-09T02:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44945.1294989702
+        },
+        {
+          "datetime": "2015-07-09T02:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 42473.0
+        },
+        {
+          "datetime": "2015-07-09T02:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 44718.4645707142
+        },
+        {
+          "datetime": "2015-07-09T04:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 41649.958612814
+        },
+        {
+          "datetime": "2015-07-09T04:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39119.0
+        },
+        {
+          "datetime": "2015-07-09T04:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 41000.5587055667
+        },
+        {
+          "datetime": "2015-07-09T06:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44157.0287259735
+        },
+        {
+          "datetime": "2015-07-09T06:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 41022.0
+        },
+        {
+          "datetime": "2015-07-09T06:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 43573.3279134081
+        },
+        {
+          "datetime": "2015-07-09T08:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 53029.2252765913
+        },
+        {
+          "datetime": "2015-07-09T08:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 48660.0
+        },
+        {
+          "datetime": "2015-07-09T08:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 52633.8322975609
+        },
+        {
+          "datetime": "2015-07-09T10:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 57838.1614486469
+        },
+        {
+          "datetime": "2015-07-09T10:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 53510.0
+        },
+        {
+          "datetime": "2015-07-09T10:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 57575.0318826117
+        },
+        {
+          "datetime": "2015-07-09T12:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 60089.6324258009
+        },
+        {
+          "datetime": "2015-07-09T12:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 55600.0
+        },
+        {
+          "datetime": "2015-07-09T12:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 60082.9619728772
+        },
+        {
+          "datetime": "2015-07-09T14:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 59310.070314799
+        },
+        {
+          "datetime": "2015-07-09T14:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 55130.0
+        },
+        {
+          "datetime": "2015-07-09T14:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 59488.9016320667
+        },
+        {
+          "datetime": "2015-07-09T16:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 57716.402258994
+        },
+        {
+          "datetime": "2015-07-09T16:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 53255.0
+        },
+        {
+          "datetime": "2015-07-09T16:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 57938.6702388424
+        },
+        {
+          "datetime": "2015-07-09T18:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 56342.4758986747
+        },
+        {
+          "datetime": "2015-07-09T18:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 51522.0
+        },
+        {
+          "datetime": "2015-07-09T18:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 56557.249668274
+        },
+        {
+          "datetime": "2015-07-09T20:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 54252.1292155523
+        },
+        {
+          "datetime": "2015-07-09T20:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 50457.0
+        },
+        {
+          "datetime": "2015-07-09T20:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 55152.4044675132
+        },
+        {
+          "datetime": "2015-07-09T22:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 50066.8001582687
+        },
+        {
+          "datetime": "2015-07-09T22:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 47119.0
+        },
+        {
+          "datetime": "2015-07-09T22:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 52097.4183211719
+        },
+        {
+          "datetime": "2015-07-10T00:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 51678.4094399287
+        },
+        {
+          "datetime": "2015-07-10T00:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 49537.0
+        },
+        {
+          "datetime": "2015-07-10T00:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 54241.5464481896
+        },
+        {
+          "datetime": "2015-07-10T02:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 43609.6218458961
+        },
+        {
+          "datetime": "2015-07-10T02:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 42545.0
+        },
+        {
+          "datetime": "2015-07-10T02:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 46211.5696223933
+        },
+        {
+          "datetime": "2015-07-10T04:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 40809.0314868301
+        },
+        {
+          "datetime": "2015-07-10T04:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39014.0
+        },
+        {
+          "datetime": "2015-07-10T04:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 42685.5581234789
+        },
+        {
+          "datetime": "2015-07-10T06:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 43682.045728448
+        },
+        {
+          "datetime": "2015-07-10T06:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 40844.0
+        },
+        {
+          "datetime": "2015-07-10T06:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 45111.587195643
+        },
+        {
+          "datetime": "2015-07-10T08:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 51500.361402279
+        },
+        {
+          "datetime": "2015-07-10T08:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 48028.0
+        },
+        {
+          "datetime": "2015-07-10T08:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 53863.5794065383
+        },
+        {
+          "datetime": "2015-07-10T10:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 55695.0126421226
+        },
+        {
+          "datetime": "2015-07-10T10:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 53171.0
+        },
+        {
+          "datetime": "2015-07-10T10:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 58894.5394333967
+        },
+        {
+          "datetime": "2015-07-10T12:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 58742.797609244
+        },
+        {
+          "datetime": "2015-07-10T12:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 55319.0
+        },
+        {
+          "datetime": "2015-07-10T12:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 61769.9884917746
+        },
+        {
+          "datetime": "2015-07-10T14:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 59280.2230078009
+        },
+        {
+          "datetime": "2015-07-10T14:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 54887.0
+        },
+        {
+          "datetime": "2015-07-10T14:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 61744.2795952912
+        },
+        {
+          "datetime": "2015-07-10T16:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 58086.1996201318
+        },
+        {
+          "datetime": "2015-07-10T16:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 52969.0
+        },
+        {
+          "datetime": "2015-07-10T16:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 60021.5167201266
+        },
+        {
+          "datetime": "2015-07-10T18:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 56583.8942647662
+        },
+        {
+          "datetime": "2015-07-10T18:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 51630.0
+        },
+        {
+          "datetime": "2015-07-10T18:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 58289.9205760601
+        },
+        {
+          "datetime": "2015-07-10T20:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 52740.9936829801
+        },
+        {
+          "datetime": "2015-07-10T20:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 50129.0
+        },
+        {
+          "datetime": "2015-07-10T20:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 55039.0717931604
+        },
+        {
+          "datetime": "2015-07-10T22:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 48639.2850655455
+        },
+        {
+          "datetime": "2015-07-10T22:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 47195.0
+        },
+        {
+          "datetime": "2015-07-10T22:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 51978.2514722573
+        },
+        {
+          "datetime": "2015-07-11T00:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 49989.9059313014
+        },
+        {
+          "datetime": "2015-07-11T00:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 49612.0
+        },
+        {
+          "datetime": "2015-07-11T00:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 54061.4028917096
+        },
+        {
+          "datetime": "2015-07-11T02:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 41688.4549106478
+        },
+        {
+          "datetime": "2015-07-11T02:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 41872.0
+        },
+        {
+          "datetime": "2015-07-11T02:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 45863.7761761772
+        },
+        {
+          "datetime": "2015-07-11T04:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 37180.7953781411
+        },
+        {
+          "datetime": "2015-07-11T04:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 37582.0
+        },
+        {
+          "datetime": "2015-07-11T04:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 41301.2150546321
+        },
+        {
+          "datetime": "2015-07-11T06:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 36556.741056635
+        },
+        {
+          "datetime": "2015-07-11T06:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 36665.0
+        },
+        {
+          "datetime": "2015-07-11T06:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 40414.2466365226
+        },
+        {
+          "datetime": "2015-07-11T08:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 40748.2603526102
+        },
+        {
+          "datetime": "2015-07-11T08:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39677.0
+        },
+        {
+          "datetime": "2015-07-11T08:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 43792.8282321096
+        },
+        {
+          "datetime": "2015-07-11T10:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 47226.9541256723
+        },
+        {
+          "datetime": "2015-07-11T10:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 45386.0
+        },
+        {
+          "datetime": "2015-07-11T10:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 49382.243052601
+        },
+        {
+          "datetime": "2015-07-11T12:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 50440.651717613
+        },
+        {
+          "datetime": "2015-07-11T12:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 47885.0
+        },
+        {
+          "datetime": "2015-07-11T12:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 51768.0833602563
+        },
+        {
+          "datetime": "2015-07-11T14:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 50237.7486221829
+        },
+        {
+          "datetime": "2015-07-11T14:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 47173.0
+        },
+        {
+          "datetime": "2015-07-11T14:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 50855.7158873196
+        },
+        {
+          "datetime": "2015-07-11T16:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 48775.3236027308
+        },
+        {
+          "datetime": "2015-07-11T16:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 45142.0
+        },
+        {
+          "datetime": "2015-07-11T16:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 48890.2585716751
+        },
+        {
+          "datetime": "2015-07-11T18:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 48453.1172073431
+        },
+        {
+          "datetime": "2015-07-11T18:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 44613.0
+        },
+        {
+          "datetime": "2015-07-11T18:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 48388.2136780823
+        },
+        {
+          "datetime": "2015-07-11T20:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 47272.7086031659
+        },
+        {
+          "datetime": "2015-07-11T20:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 44302.0
+        },
+        {
+          "datetime": "2015-07-11T20:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 47738.5784139396
+        },
+        {
+          "datetime": "2015-07-11T22:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44752.4305179271
+        },
+        {
+          "datetime": "2015-07-11T22:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 42661.0
+        },
+        {
+          "datetime": "2015-07-11T22:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 45829.0607692841
+        },
+        {
+          "datetime": "2015-07-12T00:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 47331.9246171644
+        },
+        {
+          "datetime": "2015-07-12T00:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 45861.0
+        },
+        {
+          "datetime": "2015-07-12T00:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 48612.9025414715
+        },
+        {
+          "datetime": "2015-07-12T02:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 39717.9415862136
+        },
+        {
+          "datetime": "2015-07-12T02:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39479.0
+        },
+        {
+          "datetime": "2015-07-12T02:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 40773.4762459382
+        },
+        {
+          "datetime": "2015-07-12T04:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 35222.4024038302
+        },
+        {
+          "datetime": "2015-07-12T04:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 35038.0
+        },
+        {
+          "datetime": "2015-07-12T04:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 36256.644545356
+        },
+        {
+          "datetime": "2015-07-12T06:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 33896.3688708662
+        },
+        {
+          "datetime": "2015-07-12T06:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 33541.0
+        },
+        {
+          "datetime": "2015-07-12T06:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 35341.2282258636
+        },
+        {
+          "datetime": "2015-07-12T08:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 35934.5925435636
+        },
+        {
+          "datetime": "2015-07-12T08:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 34779.0
+        },
+        {
+          "datetime": "2015-07-12T08:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 37718.8912364411
+        },
+        {
+          "datetime": "2015-07-12T10:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 40995.6660903144
+        },
+        {
+          "datetime": "2015-07-12T10:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39747.0
+        },
+        {
+          "datetime": "2015-07-12T10:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 42483.4886014175
+        },
+        {
+          "datetime": "2015-07-12T12:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44630.5488737486
+        },
+        {
+          "datetime": "2015-07-12T12:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 43023.0
+        },
+        {
+          "datetime": "2015-07-12T12:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 45583.2432453065
+        },
+        {
+          "datetime": "2015-07-12T14:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44340.3965503829
+        },
+        {
+          "datetime": "2015-07-12T14:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 42195.0
+        },
+        {
+          "datetime": "2015-07-12T14:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 44801.2509604863
+        },
+        {
+          "datetime": "2015-07-12T16:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 42583.6901012532
+        },
+        {
+          "datetime": "2015-07-12T16:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 39875.0
+        },
+        {
+          "datetime": "2015-07-12T16:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 42711.8460960225
+        },
+        {
+          "datetime": "2015-07-12T18:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 42800.586889794
+        },
+        {
+          "datetime": "2015-07-12T18:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 40061.0
+        },
+        {
+          "datetime": "2015-07-12T18:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 42760.594017663
+        },
+        {
+          "datetime": "2015-07-12T20:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44888.1369016623
+        },
+        {
+          "datetime": "2015-07-12T20:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 42150.0
+        },
+        {
+          "datetime": "2015-07-12T20:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 44820.0955324856
+        },
+        {
+          "datetime": "2015-07-12T22:00:00",
+          "period": "Summer week",
+          "series": "Fading",
+          "demand_mw": 44728.7453124989
+        },
+        {
+          "datetime": "2015-07-12T22:00:00",
+          "period": "Summer week",
+          "series": "Observed",
+          "demand_mw": 42483.0
+        },
+        {
+          "datetime": "2015-07-12T22:00:00",
+          "period": "Summer week",
+          "series": "Rolling",
+          "demand_mw": 44664.0294517466
+        },
+        {
+          "datetime": "2015-02-02T00:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 72925.0464953622
+        },
+        {
+          "datetime": "2015-02-02T00:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 72326.0
+        },
+        {
+          "datetime": "2015-02-02T00:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 71609.4789001414
+        },
+        {
+          "datetime": "2015-02-02T02:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 69046.5899342241
+        },
+        {
+          "datetime": "2015-02-02T02:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 68033.0
+        },
+        {
+          "datetime": "2015-02-02T02:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 67723.1931833857
+        },
+        {
+          "datetime": "2015-02-02T04:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 65154.2843093194
+        },
+        {
+          "datetime": "2015-02-02T04:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 64163.0
+        },
+        {
+          "datetime": "2015-02-02T04:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 63846.8532342236
+        },
+        {
+          "datetime": "2015-02-02T06:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 69989.5853872464
+        },
+        {
+          "datetime": "2015-02-02T06:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 69242.0
+        },
+        {
+          "datetime": "2015-02-02T06:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 68720.6299579861
+        },
+        {
+          "datetime": "2015-02-02T08:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 82233.848697312
+        },
+        {
+          "datetime": "2015-02-02T08:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 82585.0
+        },
+        {
+          "datetime": "2015-02-02T08:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 80666.9576287806
+        },
+        {
+          "datetime": "2015-02-02T10:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 82840.1015941327
+        },
+        {
+          "datetime": "2015-02-02T10:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 83071.0
+        },
+        {
+          "datetime": "2015-02-02T10:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 81097.4373079081
+        },
+        {
+          "datetime": "2015-02-02T12:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83197.3775614557
+        },
+        {
+          "datetime": "2015-02-02T12:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 81710.0
+        },
+        {
+          "datetime": "2015-02-02T12:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 81690.8681078559
+        },
+        {
+          "datetime": "2015-02-02T14:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 81234.3521481875
+        },
+        {
+          "datetime": "2015-02-02T14:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 79384.0
+        },
+        {
+          "datetime": "2015-02-02T14:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 79918.8660575433
+        },
+        {
+          "datetime": "2015-02-02T16:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 77592.3541643225
+        },
+        {
+          "datetime": "2015-02-02T16:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 75795.0
+        },
+        {
+          "datetime": "2015-02-02T16:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 76403.8961708548
+        },
+        {
+          "datetime": "2015-02-02T18:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 81060.3396733552
+        },
+        {
+          "datetime": "2015-02-02T18:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 79773.0
+        },
+        {
+          "datetime": "2015-02-02T18:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 80131.7058918891
+        },
+        {
+          "datetime": "2015-02-02T20:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 81817.1694781542
+        },
+        {
+          "datetime": "2015-02-02T20:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 83399.0
+        },
+        {
+          "datetime": "2015-02-02T20:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 81080.0838334381
+        },
+        {
+          "datetime": "2015-02-02T22:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 72955.4701427954
+        },
+        {
+          "datetime": "2015-02-02T22:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 74519.0
+        },
+        {
+          "datetime": "2015-02-02T22:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 72377.0829068834
+        },
+        {
+          "datetime": "2015-02-03T00:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 74519.8002895528
+        },
+        {
+          "datetime": "2015-02-03T00:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 76704.0
+        },
+        {
+          "datetime": "2015-02-03T00:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 74044.9575007146
+        },
+        {
+          "datetime": "2015-02-03T02:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 70903.7058096432
+        },
+        {
+          "datetime": "2015-02-03T02:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 71794.0
+        },
+        {
+          "datetime": "2015-02-03T02:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 70418.5047685575
+        },
+        {
+          "datetime": "2015-02-03T04:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 66759.9946812846
+        },
+        {
+          "datetime": "2015-02-03T04:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 67810.0
+        },
+        {
+          "datetime": "2015-02-03T04:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 66194.8926117407
+        },
+        {
+          "datetime": "2015-02-03T06:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 71434.0120038116
+        },
+        {
+          "datetime": "2015-02-03T06:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 72386.0
+        },
+        {
+          "datetime": "2015-02-03T06:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 70741.6221483642
+        },
+        {
+          "datetime": "2015-02-03T08:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83922.4811819131
+        },
+        {
+          "datetime": "2015-02-03T08:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 84301.0
+        },
+        {
+          "datetime": "2015-02-03T08:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 82958.1144914175
+        },
+        {
+          "datetime": "2015-02-03T10:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83694.8001610984
+        },
+        {
+          "datetime": "2015-02-03T10:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 85085.0
+        },
+        {
+          "datetime": "2015-02-03T10:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 82575.2435813454
+        },
+        {
+          "datetime": "2015-02-03T12:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83474.4557845071
+        },
+        {
+          "datetime": "2015-02-03T12:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 84767.0
+        },
+        {
+          "datetime": "2015-02-03T12:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 82453.7860325428
+        },
+        {
+          "datetime": "2015-02-03T14:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 81121.1953292586
+        },
+        {
+          "datetime": "2015-02-03T14:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 81964.0
+        },
+        {
+          "datetime": "2015-02-03T14:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 80225.2890232987
+        },
+        {
+          "datetime": "2015-02-03T16:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 77636.1892590745
+        },
+        {
+          "datetime": "2015-02-03T16:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 78674.0
+        },
+        {
+          "datetime": "2015-02-03T16:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 76849.5651721792
+        },
+        {
+          "datetime": "2015-02-03T18:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 81943.5643354086
+        },
+        {
+          "datetime": "2015-02-03T18:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 82049.0
+        },
+        {
+          "datetime": "2015-02-03T18:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 81305.8463740721
+        },
+        {
+          "datetime": "2015-02-03T20:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83748.5478759955
+        },
+        {
+          "datetime": "2015-02-03T20:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 85455.0
+        },
+        {
+          "datetime": "2015-02-03T20:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 83155.5403427004
+        },
+        {
+          "datetime": "2015-02-03T22:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 74772.9475887225
+        },
+        {
+          "datetime": "2015-02-03T22:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 76649.0
+        },
+        {
+          "datetime": "2015-02-03T22:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 74239.7690205173
+        },
+        {
+          "datetime": "2015-02-04T00:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 76963.8486366447
+        },
+        {
+          "datetime": "2015-02-04T00:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 78015.0
+        },
+        {
+          "datetime": "2015-02-04T00:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 76507.6350777334
+        },
+        {
+          "datetime": "2015-02-04T02:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 72670.889717315
+        },
+        {
+          "datetime": "2015-02-04T02:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 74249.0
+        },
+        {
+          "datetime": "2015-02-04T02:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 72103.3703113288
+        },
+        {
+          "datetime": "2015-02-04T04:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 68472.2622506947
+        },
+        {
+          "datetime": "2015-02-04T04:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 69940.0
+        },
+        {
+          "datetime": "2015-02-04T04:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 67810.5620586956
+        },
+        {
+          "datetime": "2015-02-04T06:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 72753.5822026994
+        },
+        {
+          "datetime": "2015-02-04T06:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 74067.0
+        },
+        {
+          "datetime": "2015-02-04T06:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 72013.3393647015
+        },
+        {
+          "datetime": "2015-02-04T08:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 85418.1781276282
+        },
+        {
+          "datetime": "2015-02-04T08:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 86173.0
+        },
+        {
+          "datetime": "2015-02-04T08:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84441.9504528677
+        },
+        {
+          "datetime": "2015-02-04T10:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 85424.9546837851
+        },
+        {
+          "datetime": "2015-02-04T10:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 87038.0
+        },
+        {
+          "datetime": "2015-02-04T10:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84438.0377979618
+        },
+        {
+          "datetime": "2015-02-04T12:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 85049.3200907065
+        },
+        {
+          "datetime": "2015-02-04T12:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 86851.0
+        },
+        {
+          "datetime": "2015-02-04T12:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84308.9006545895
+        },
+        {
+          "datetime": "2015-02-04T14:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83180.7782251756
+        },
+        {
+          "datetime": "2015-02-04T14:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 84090.0
+        },
+        {
+          "datetime": "2015-02-04T14:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 82609.5567073117
+        },
+        {
+          "datetime": "2015-02-04T16:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 79450.1716116904
+        },
+        {
+          "datetime": "2015-02-04T16:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 80770.0
+        },
+        {
+          "datetime": "2015-02-04T16:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 78998.5017979672
+        },
+        {
+          "datetime": "2015-02-04T18:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 82533.6938902828
+        },
+        {
+          "datetime": "2015-02-04T18:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 83634.0
+        },
+        {
+          "datetime": "2015-02-04T18:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 82172.2752082556
+        },
+        {
+          "datetime": "2015-02-04T20:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 84032.7096725701
+        },
+        {
+          "datetime": "2015-02-04T20:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 86965.0
+        },
+        {
+          "datetime": "2015-02-04T20:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 83734.6827146466
+        },
+        {
+          "datetime": "2015-02-04T22:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 75107.3213919758
+        },
+        {
+          "datetime": "2015-02-04T22:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 77688.0
+        },
+        {
+          "datetime": "2015-02-04T22:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 74882.9797648845
+        },
+        {
+          "datetime": "2015-02-05T00:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 76687.927158789
+        },
+        {
+          "datetime": "2015-02-05T00:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 79533.0
+        },
+        {
+          "datetime": "2015-02-05T00:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 76552.5016369397
+        },
+        {
+          "datetime": "2015-02-05T02:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 71700.8490301425
+        },
+        {
+          "datetime": "2015-02-05T02:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 75964.0
+        },
+        {
+          "datetime": "2015-02-05T02:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 71539.1436215302
+        },
+        {
+          "datetime": "2015-02-05T04:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 67494.9459825281
+        },
+        {
+          "datetime": "2015-02-05T04:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 71514.0
+        },
+        {
+          "datetime": "2015-02-05T04:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 67313.2719552152
+        },
+        {
+          "datetime": "2015-02-05T06:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 71450.5398536378
+        },
+        {
+          "datetime": "2015-02-05T06:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 75497.0
+        },
+        {
+          "datetime": "2015-02-05T06:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 71251.4840788656
+        },
+        {
+          "datetime": "2015-02-05T08:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 84215.6228930075
+        },
+        {
+          "datetime": "2015-02-05T08:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 86940.0
+        },
+        {
+          "datetime": "2015-02-05T08:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 83853.7313086021
+        },
+        {
+          "datetime": "2015-02-05T10:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 84516.3943331133
+        },
+        {
+          "datetime": "2015-02-05T10:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 87210.0
+        },
+        {
+          "datetime": "2015-02-05T10:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84075.2689879425
+        },
+        {
+          "datetime": "2015-02-05T12:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 85662.0132135906
+        },
+        {
+          "datetime": "2015-02-05T12:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 87048.0
+        },
+        {
+          "datetime": "2015-02-05T12:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 85285.8142393256
+        },
+        {
+          "datetime": "2015-02-05T14:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 84370.8288576551
+        },
+        {
+          "datetime": "2015-02-05T14:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 84652.0
+        },
+        {
+          "datetime": "2015-02-05T14:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84098.7439917528
+        },
+        {
+          "datetime": "2015-02-05T16:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 81131.4678474273
+        },
+        {
+          "datetime": "2015-02-05T16:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 81943.0
+        },
+        {
+          "datetime": "2015-02-05T16:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 80977.049854214
+        },
+        {
+          "datetime": "2015-02-05T18:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 84168.4884851089
+        },
+        {
+          "datetime": "2015-02-05T18:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 85237.0
+        },
+        {
+          "datetime": "2015-02-05T18:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84171.9306255664
+        },
+        {
+          "datetime": "2015-02-05T20:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 84682.3846392411
+        },
+        {
+          "datetime": "2015-02-05T20:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 88284.0
+        },
+        {
+          "datetime": "2015-02-05T20:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84769.5001314188
+        },
+        {
+          "datetime": "2015-02-05T22:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 75938.780908445
+        },
+        {
+          "datetime": "2015-02-05T22:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 79454.0
+        },
+        {
+          "datetime": "2015-02-05T22:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 76055.7549559521
+        },
+        {
+          "datetime": "2015-02-06T00:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 77944.6892700365
+        },
+        {
+          "datetime": "2015-02-06T00:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 81383.0
+        },
+        {
+          "datetime": "2015-02-06T00:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 78041.4155959953
+        },
+        {
+          "datetime": "2015-02-06T02:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 73184.3146438561
+        },
+        {
+          "datetime": "2015-02-06T02:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 78267.0
+        },
+        {
+          "datetime": "2015-02-06T02:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 73224.5537277854
+        },
+        {
+          "datetime": "2015-02-06T04:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 69693.1422169357
+        },
+        {
+          "datetime": "2015-02-06T04:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 73763.0
+        },
+        {
+          "datetime": "2015-02-06T04:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 69685.6917151902
+        },
+        {
+          "datetime": "2015-02-06T06:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 74270.2859792568
+        },
+        {
+          "datetime": "2015-02-06T06:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 77691.0
+        },
+        {
+          "datetime": "2015-02-06T06:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 74230.7038700678
+        },
+        {
+          "datetime": "2015-02-06T08:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 87020.9457242755
+        },
+        {
+          "datetime": "2015-02-06T08:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 90420.0
+        },
+        {
+          "datetime": "2015-02-06T08:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 86963.5457310395
+        },
+        {
+          "datetime": "2015-02-06T10:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 87696.0090241522
+        },
+        {
+          "datetime": "2015-02-06T10:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 91471.0
+        },
+        {
+          "datetime": "2015-02-06T10:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 87716.6124736643
+        },
+        {
+          "datetime": "2015-02-06T12:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 87503.8867243029
+        },
+        {
+          "datetime": "2015-02-06T12:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 91583.0
+        },
+        {
+          "datetime": "2015-02-06T12:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 87717.8281529854
+        },
+        {
+          "datetime": "2015-02-06T14:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83940.327718162
+        },
+        {
+          "datetime": "2015-02-06T14:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 88490.0
+        },
+        {
+          "datetime": "2015-02-06T14:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84194.6032044402
+        },
+        {
+          "datetime": "2015-02-06T16:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 79627.5513713923
+        },
+        {
+          "datetime": "2015-02-06T16:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 83989.0
+        },
+        {
+          "datetime": "2015-02-06T16:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 79912.4421263911
+        },
+        {
+          "datetime": "2015-02-06T18:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 83199.8428664018
+        },
+        {
+          "datetime": "2015-02-06T18:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 86372.0
+        },
+        {
+          "datetime": "2015-02-06T18:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 83453.2269344244
+        },
+        {
+          "datetime": "2015-02-06T20:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 84765.996771115
+        },
+        {
+          "datetime": "2015-02-06T20:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 89277.0
+        },
+        {
+          "datetime": "2015-02-06T20:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 84981.526939524
+        },
+        {
+          "datetime": "2015-02-06T22:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 77028.9510381678
+        },
+        {
+          "datetime": "2015-02-06T22:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 81242.0
+        },
+        {
+          "datetime": "2015-02-06T22:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 77202.9990533601
+        },
+        {
+          "datetime": "2015-02-07T00:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 79036.3723752276
+        },
+        {
+          "datetime": "2015-02-07T00:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 82982.0
+        },
+        {
+          "datetime": "2015-02-07T00:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 79166.1440408802
+        },
+        {
+          "datetime": "2015-02-07T02:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 73331.7788787222
+        },
+        {
+          "datetime": "2015-02-07T02:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 77193.0
+        },
+        {
+          "datetime": "2015-02-07T02:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 73401.2409499779
+        },
+        {
+          "datetime": "2015-02-07T04:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 68375.8252604465
+        },
+        {
+          "datetime": "2015-02-07T04:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 71981.0
+        },
+        {
+          "datetime": "2015-02-07T04:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 68330.9239028724
+        },
+        {
+          "datetime": "2015-02-07T06:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 69140.4648184961
+        },
+        {
+          "datetime": "2015-02-07T06:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 72590.0
+        },
+        {
+          "datetime": "2015-02-07T06:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 68946.1083793691
+        },
+        {
+          "datetime": "2015-02-07T08:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 74053.7768778685
+        },
+        {
+          "datetime": "2015-02-07T08:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 77303.0
+        },
+        {
+          "datetime": "2015-02-07T08:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 73811.2556066254
+        },
+        {
+          "datetime": "2015-02-07T10:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 77749.0959667364
+        },
+        {
+          "datetime": "2015-02-07T10:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 81566.0
+        },
+        {
+          "datetime": "2015-02-07T10:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 77696.6443147257
+        },
+        {
+          "datetime": "2015-02-07T12:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 76499.2681961528
+        },
+        {
+          "datetime": "2015-02-07T12:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 80214.0
+        },
+        {
+          "datetime": "2015-02-07T12:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 76826.4210965087
+        },
+        {
+          "datetime": "2015-02-07T14:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 73704.7929963087
+        },
+        {
+          "datetime": "2015-02-07T14:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 76074.0
+        },
+        {
+          "datetime": "2015-02-07T14:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 74165.5818619202
+        },
+        {
+          "datetime": "2015-02-07T16:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 70145.4114254695
+        },
+        {
+          "datetime": "2015-02-07T16:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 70972.0
+        },
+        {
+          "datetime": "2015-02-07T16:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 70790.4007902152
+        },
+        {
+          "datetime": "2015-02-07T18:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 74435.7201591589
+        },
+        {
+          "datetime": "2015-02-07T18:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 73881.0
+        },
+        {
+          "datetime": "2015-02-07T18:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 75344.5214131723
+        },
+        {
+          "datetime": "2015-02-07T20:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 77980.373569998
+        },
+        {
+          "datetime": "2015-02-07T20:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 79652.0
+        },
+        {
+          "datetime": "2015-02-07T20:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 79069.0597308095
+        },
+        {
+          "datetime": "2015-02-07T22:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 72138.8443542677
+        },
+        {
+          "datetime": "2015-02-07T22:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 73742.0
+        },
+        {
+          "datetime": "2015-02-07T22:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 73283.5692106278
+        },
+        {
+          "datetime": "2015-02-08T00:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 75978.0295889768
+        },
+        {
+          "datetime": "2015-02-08T00:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 77218.0
+        },
+        {
+          "datetime": "2015-02-08T00:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 77059.770826239
+        },
+        {
+          "datetime": "2015-02-08T02:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 71225.8232319723
+        },
+        {
+          "datetime": "2015-02-08T02:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 72332.0
+        },
+        {
+          "datetime": "2015-02-08T02:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 72159.5428005735
+        },
+        {
+          "datetime": "2015-02-08T04:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 65785.5911052039
+        },
+        {
+          "datetime": "2015-02-08T04:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 66689.0
+        },
+        {
+          "datetime": "2015-02-08T04:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 66562.2473826765
+        },
+        {
+          "datetime": "2015-02-08T06:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 65243.6921139236
+        },
+        {
+          "datetime": "2015-02-08T06:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 65506.0
+        },
+        {
+          "datetime": "2015-02-08T06:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 65864.5226937112
+        },
+        {
+          "datetime": "2015-02-08T08:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 67584.2264248582
+        },
+        {
+          "datetime": "2015-02-08T08:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 67417.0
+        },
+        {
+          "datetime": "2015-02-08T08:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 67903.527782256
+        },
+        {
+          "datetime": "2015-02-08T10:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 71816.1464361339
+        },
+        {
+          "datetime": "2015-02-08T10:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 72162.0
+        },
+        {
+          "datetime": "2015-02-08T10:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 71798.4412181603
+        },
+        {
+          "datetime": "2015-02-08T12:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 73734.4842126389
+        },
+        {
+          "datetime": "2015-02-08T12:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 73700.0
+        },
+        {
+          "datetime": "2015-02-08T12:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 73305.7087789618
+        },
+        {
+          "datetime": "2015-02-08T14:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 70807.3132796101
+        },
+        {
+          "datetime": "2015-02-08T14:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 70203.0
+        },
+        {
+          "datetime": "2015-02-08T14:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 70419.1417971071
+        },
+        {
+          "datetime": "2015-02-08T16:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 66641.1578716775
+        },
+        {
+          "datetime": "2015-02-08T16:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 64842.0
+        },
+        {
+          "datetime": "2015-02-08T16:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 66582.5627632922
+        },
+        {
+          "datetime": "2015-02-08T18:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 70594.9773848796
+        },
+        {
+          "datetime": "2015-02-08T18:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 67944.0
+        },
+        {
+          "datetime": "2015-02-08T18:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 71148.8616942974
+        },
+        {
+          "datetime": "2015-02-08T20:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 76863.7139384337
+        },
+        {
+          "datetime": "2015-02-08T20:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 76709.0
+        },
+        {
+          "datetime": "2015-02-08T20:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 77985.69994508
+        },
+        {
+          "datetime": "2015-02-08T22:00:00",
+          "period": "Winter week",
+          "series": "Fading",
+          "demand_mw": 71369.8799722323
+        },
+        {
+          "datetime": "2015-02-08T22:00:00",
+          "period": "Winter week",
+          "series": "Observed",
+          "demand_mw": 71729.0
+        },
+        {
+          "datetime": "2015-02-08T22:00:00",
+          "period": "Winter week",
+          "series": "Rolling",
+          "demand_mw": 72890.1377683946
+        }
+      ],
+      "runtime": [
+        {
+          "method_short": "Fading",
+          "feature_construction_seconds": 0.29990775,
+          "ridge_tune_and_refit_seconds": 0.192577875,
+          "feature_matrix_mib": 48.1201171875,
+          "online_signature_state_kib": 0.984375
+        },
+        {
+          "method_short": "Rolling",
+          "feature_construction_seconds": 0.253084417,
+          "ridge_tune_and_refit_seconds": 0.183234542,
+          "feature_matrix_mib": 48.1201171875,
+          "online_signature_state_kib": 0.984375
+        }
+      ],
+      "tradeoffs": [
+        {
+          "property": "Equal-rate state complexity",
+          "rolling": "O(d^N)",
+          "fading": "O(d^N)"
+        },
+        {
+          "property": "Initialization",
+          "rolling": "Exact after first full window",
+          "fading": "Needs a prior state or burn-in"
+        },
+        {
+          "property": "Memory boundary",
+          "rolling": "Hard cutoff at H",
+          "fading": "Smooth exponential tail"
+        },
+        {
+          "property": "Online update",
+          "rolling": "Remove oldest; append newest",
+          "fading": "Discount state; append newest"
+        },
+        {
+          "property": "Regime change",
+          "rolling": "Old regime disappears after H",
+          "fading": "Old regime decays gradually"
+        },
+        {
+          "property": "Remote past",
+          "rolling": "Exactly removed",
+          "fading": "Never exactly zero"
+        },
+        {
+          "property": "State dynamics",
+          "rolling": "Moving lower boundary",
+          "fading": "Mean-reverting Markov state"
+        },
+        {
+          "property": "Stored history",
+          "rolling": "Signature state plus window buffer",
+          "fading": "Signature state plus latest point"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "comparison_results",
+      "label": "Controlled Python comparison",
+      "path": "src/sliding_window_signatures/comparison.py"
+    },
+    {
+      "id": "rolling_paper",
+      "label": "Sliding-Window Signatures paper",
+      "href": "https://arxiv.org/abs/2510.12337"
+    },
+    {
+      "id": "fading_paper",
+      "label": "Exponentially Fading Memory Signature paper v2",
+      "href": "https://arxiv.org/abs/2507.03700v2"
+    },
+    {
+      "id": "paper_comparison",
+      "label": "Structural comparison derived from both signature papers",
+      "href": "https://arxiv.org/abs/2507.03700v2"
+    },
+    {
+      "id": "author_repository",
+      "label": "Author-associated exploratory repository",
+      "href": "https://github.com/DimitriSotnikov/signature"
+    },
+    {
+      "id": "headline_sql",
+      "label": "Headline query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM headline",
+        "description": "Selects the three headline 2015 comparison metrics.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "headline"
+        ]
+      }
+    },
+    {
+      "id": "memory_kernel_sql",
+      "label": "Memory Kernel query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM memory_kernel ORDER BY age_days, series",
+        "description": "Selects the rolling and fading memory-weight curves.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "memory_kernel"
+        ]
+      }
+    },
+    {
+      "id": "validation_sweep_sql",
+      "label": "Validation Sweep query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM validation_sweep ORDER BY parameter_days, series",
+        "description": "Selects validation RMSE and Ridge penalty by memory horizon.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "validation_sweep"
+        ]
+      }
+    },
+    {
+      "id": "test_metrics_sql",
+      "label": "Test Metrics query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM test_metrics ORDER BY test_rmse_mw",
+        "description": "Selects exact 2015 accuracy metrics for both methods.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "test_metrics"
+        ]
+      }
+    },
+    {
+      "id": "seasonal_metrics_sql",
+      "label": "Seasonal Metrics query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM seasonal_metrics ORDER BY season_order, series",
+        "description": "Selects 2015 error metrics by season and method.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "seasonal_metrics"
+        ]
+      }
+    },
+    {
+      "id": "forecast_examples_sql",
+      "label": "Forecast Examples query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM forecast_examples ORDER BY period, datetime, series",
+        "description": "Selects the compact winter and summer forecast traces.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "forecast_examples"
+        ]
+      }
+    },
+    {
+      "id": "runtime_sql",
+      "label": "Runtime query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM runtime ORDER BY method_short",
+        "description": "Selects measured feature, fit, matrix, and state costs.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "runtime"
+        ]
+      }
+    },
+    {
+      "id": "tradeoffs_sql",
+      "label": "Tradeoffs query",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT * FROM tradeoffs ORDER BY property",
+        "description": "Selects the paper-derived structural method comparison.",
+        "executed_at": "2026-08-04T15:41:42+00:00",
+        "tables_used": [
+          "tradeoffs"
+        ]
+      }
+    }
+  ],
+  "package_info": {
+    "root": "results/comparison",
+    "manifestPath": "results/comparison/report-artifact.json",
+    "snapshotPath": "results/comparison/report-artifact.json",
+    "originUrl": "artifact://rolling-vs-fading-memory-signatures"
+  }
+}

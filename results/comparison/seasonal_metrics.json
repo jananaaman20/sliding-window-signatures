@@ -1,0 +1,66 @@
+[
+  {
+    "season":"Winter (DJF)",
+    "method":"Rolling Window Signature",
+    "observations":4320,
+    "rmse_mw":3484.6485263738,
+    "mae_mw":2572.921949845,
+    "mape_percent":3.9929561316
+  },
+  {
+    "season":"Winter (DJF)",
+    "method":"Fading Memory Signature",
+    "observations":4320,
+    "rmse_mw":3567.136274915,
+    "mae_mw":2681.8508831165,
+    "mape_percent":4.1440720778
+  },
+  {
+    "season":"Spring (MAM)",
+    "method":"Rolling Window Signature",
+    "observations":4416,
+    "rmse_mw":3541.7773645501,
+    "mae_mw":2561.743732157,
+    "mape_percent":4.953703718
+  },
+  {
+    "season":"Spring (MAM)",
+    "method":"Fading Memory Signature",
+    "observations":4416,
+    "rmse_mw":3340.1468123051,
+    "mae_mw":2409.6194611908,
+    "mape_percent":4.6940218124
+  },
+  {
+    "season":"Summer (JJA)",
+    "method":"Rolling Window Signature",
+    "observations":4416,
+    "rmse_mw":3822.9791394618,
+    "mae_mw":3023.2017748129,
+    "mape_percent":6.762734874
+  },
+  {
+    "season":"Summer (JJA)",
+    "method":"Fading Memory Signature",
+    "observations":4416,
+    "rmse_mw":3679.9612223087,
+    "mae_mw":2844.0934650022,
+    "mape_percent":6.3380066692
+  },
+  {
+    "season":"Autumn (SON)",
+    "method":"Rolling Window Signature",
+    "observations":4368,
+    "rmse_mw":2744.1285304011,
+    "mae_mw":1992.6378216138,
+    "mape_percent":3.7766317998
+  },
+  {
+    "season":"Autumn (SON)",
+    "method":"Fading Memory Signature",
+    "observations":4368,
+    "rmse_mw":2479.0226320599,
+    "mae_mw":1769.8120771048,
+    "mape_percent":3.3488178974
+  }
+]

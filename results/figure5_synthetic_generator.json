@@ -1,0 +1,8 @@
+{
+  "alpha": 0.005,
+  "noise_standard_deviation": 1000.0,
+  "seed": 141,
+  "intercept": 86676.00655277466,
+  "linear_coefficient": -3867.657242604082,
+  "quadratic_coefficient": 86.55096558361889
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "Model":"LR(smoothed T, smoothed T^2)",
+    "RMSE (MW)":6513.3325025738,
+    "MAPE (%)":10.6596229801,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"LR(T, T^2, smoothed T, smoothed T^2)",
+    "RMSE (MW)":6165.0560940928,
+    "MAPE (%)":9.8581159216,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"LR(Y[t-7 days])",
+    "RMSE (MW)":4430.9418903259,
+    "MAPE (%)":5.6762470346,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"LR(T features, Y[t-7 days])",
+    "RMSE (MW)":3761.0171093502,
+    "MAPE (%)":5.2980166334,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"RidgeSig",
+    "RMSE (MW)":3265.2081893346,
+    "MAPE (%)":4.4596226823,
+    "Selected lambda (RMSE)":0.1,
+    "Selected lambda (MAPE)":0.1,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  }
+]

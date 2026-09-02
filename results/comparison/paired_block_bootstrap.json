@@ -1,0 +1,11 @@
+{
+  "observed_rmse_difference_mw": -122.25440189379378,
+  "ci_95_lower_mw": -251.64767907091837,
+  "ci_95_upper_mw": 5.413028550256247,
+  "bootstrap_resample_share_fading_lower_rmse": 0.9685,
+  "bootstrap_repetitions": 2000,
+  "block_length_observations": 336,
+  "seed": 25070370,
+  "comparison": "Fading Memory Signature minus Rolling Window Signature",
+  "block_days": 7
+}

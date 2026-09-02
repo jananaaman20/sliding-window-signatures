@@ -1,0 +1,47 @@
+[
+  {
+    "Model":"LR(T)",
+    "RMSE (MW)":5434.824500203,
+    "MAPE (%)":8.2676028779,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"LR(T, T^2)",
+    "RMSE (MW)":4729.3235545685,
+    "MAPE (%)":6.4325543298,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"LR(smoothed T)",
+    "RMSE (MW)":3078.8208259164,
+    "MAPE (%)":4.8768261556,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"RidgeSig",
+    "RMSE (MW)":1636.6908715134,
+    "MAPE (%)":2.507592244,
+    "Selected lambda (RMSE)":79.0604321091,
+    "Selected lambda (MAPE)":138.9495494373,
+    "Test start":"2015-01-10T00:00",
+    "Test end":"2015-12-31T23:30"
+  },
+  {
+    "Model":"Oracle LR(smoothed T, smoothed T^2)",
+    "RMSE (MW)":994.6689271125,
+    "MAPE (%)":1.5128361119,
+    "Selected lambda (RMSE)":null,
+    "Selected lambda (MAPE)":null,
+    "Test start":"2015-01-01T00:00",
+    "Test end":"2015-12-31T23:30"
+  }
+]

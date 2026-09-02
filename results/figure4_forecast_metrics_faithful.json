@@ -1,0 +1,14 @@
+[
+  {
+    "Model":"RidgeSig",
+    "RMSE (MW)":3150.0202658317,
+    "MAE (MW)":2265.9173257908,
+    "MAPE (%)":4.4077555537
+  },
+  {
+    "Model":"Temperature features + weekly lag",
+    "RMSE (MW)":3701.6632246808,
+    "MAE (MW)":2802.6676615437,
+    "MAPE (%)":5.2642542142
+  }
+]
